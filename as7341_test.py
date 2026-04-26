@@ -8,6 +8,8 @@ Revised: uses smbus2 direct bus access — works via SSH and interactive
 
 import time
 import smbus2
+import sys
+sys.stdout.reconfigure(line_buffering=True)
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 I2C_BUS     = 1        # Confirmed bus on Pi 5 after SDA resolder
