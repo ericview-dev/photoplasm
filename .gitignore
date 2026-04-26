@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#Photoplasm- exclude generated data and plot outputs
+cal_data/
+*.png
+*.svg
+*.log
+
