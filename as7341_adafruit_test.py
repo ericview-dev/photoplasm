@@ -24,7 +24,8 @@ sensor = AS7341(i2c)
 print("Sensor connected OK")
 
 # Tuning
-sensor.gain = 256
+from adafruit_as7341 import AS7341, Gain
+sensor.gain = Gain.GAIN_256X
 sensor.atime = 100
 sensor.astep = 999
 
