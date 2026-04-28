@@ -125,7 +125,6 @@ import spidev
 import time
 import csv
 import os
-import math
 from datetime import datetime
 from PIL import Image, ImageDraw
 
@@ -153,20 +152,20 @@ VALID_GAINS = ["0_5X","1X","2X","4X","8X","16X","32X","64X","128X","256X"]
 
 _parser = argparse.ArgumentParser(
     prog="photoplasm_densitometer",
-    description="BioLight OLED transmission densitometer — 100-step pixel density sweep.",
+    description="BioLight OLED transmission densitometer — 16-step Bayer dither density sweep.",
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog=(
         "examples:\n"
         "  sudo python3 photoplasm_densitometer.py\n"
         "  sudo python3 photoplasm_densitometer.py --gain 128X\n"
-        "  sudo python3 photoplasm_densitometer.py --settle 1.0\n"
+        "  sudo python3 photoplasm_densitometer.py --settle 10.0\n"
         "  python3 photoplasm_densitometer.py --dry-run\n"
     )
 )
 _parser.add_argument("--gain",    type=str,   default=None, choices=VALID_GAINS, metavar="Nx",
     help=f"AS7341 gain — one of: {' '.join(VALID_GAINS)} (default: 256X)")
 _parser.add_argument("--settle",  type=float, default=None, metavar="N",
-    help="settle time in seconds per step (default: 0.5)")
+    help="dwell time in seconds per step (default: 5.0) — read taken at 90% of dwell")
 _parser.add_argument("--pwm",     type=int,   default=None, metavar="N",
     help="LED PWM duty cycle 0–100 (default: 100)")
 _parser.add_argument("--dry-run", action="store_true", dest="dry_run",
@@ -181,10 +180,8 @@ PWM_DUTY_PCT = 100      # LED brightness — keep at 100% for densitometer
 PWM_FREQ_HZ  = 1000     # MOSFET gate switching frequency
 WARMUP_SEC   = 2.0      # LED warm-up settle after power on
 SETTLE_SEC   = 5.0      # seconds each Bayer frame is held on OLED
-                         # 5s × 16 steps = ~80s total + warmup
-MEASURE_DELAY = 4.5     # seconds after frame display before AS7341 read
-                         # allows OLED pixels to fully stabilise
-                         # read happens at 4.5s, frame holds until 5.0s
+                         # 5s × 17 steps = ~85s total + warmup
+                         # read taken at 90% of dwell (MEASURE_DELAY = SETTLE_SEC × 0.9)
 AS7341_GAIN  = "256X"   # maximum gain — ring light at substrate is dim
 STEPS        = 16       # 4×4 Bayer matrix — 16 unique threshold levels
 OUTPUT_DIR   = "/home/ericview/cal_logs"
@@ -194,6 +191,11 @@ if _args.gain   is not None: AS7341_GAIN  = _args.gain
 if _args.settle is not None: SETTLE_SEC   = _args.settle
 if _args.pwm    is not None: PWM_DUTY_PCT = _args.pwm
 if _args.dry_run:             SENSOR_PRESENT = False
+
+# MEASURE_DELAY derived from SETTLE_SEC — always 90% of dwell.
+# Read happens at 90% of the dwell window; OLED holds for remaining 10%.
+# Recalculated here so --settle override is correctly reflected.
+MEASURE_DELAY = SETTLE_SEC * 0.9
 # ══════════════════════════════════════════════════════════════════
 
 
