@@ -114,7 +114,7 @@ CLI USAGE
     python3 photoplasm_densitometer.py --dry-run
 
   Total run time ≈ (17 × SETTLE_SEC) + warmup + overhead
-  Default: ~12 seconds at 0.5s settle per step.
+  Default: ~87 seconds at 5.0s dwell per step.
 
   Ctrl+C exits cleanly — LEDs and OLED powered off by finally block.
 """
@@ -180,7 +180,11 @@ _args = _parser.parse_args()
 PWM_DUTY_PCT = 100      # LED brightness — keep at 100% for densitometer
 PWM_FREQ_HZ  = 1000     # MOSFET gate switching frequency
 WARMUP_SEC   = 2.0      # LED warm-up settle after power on
-SETTLE_SEC   = 0.5      # settle per step — 0.5s × 16 steps = ~12s total
+SETTLE_SEC   = 5.0      # seconds each Bayer frame is held on OLED
+                         # 5s × 16 steps = ~80s total + warmup
+MEASURE_DELAY = 4.5     # seconds after frame display before AS7341 read
+                         # allows OLED pixels to fully stabilise
+                         # read happens at 4.5s, frame holds until 5.0s
 AS7341_GAIN  = "256X"   # maximum gain — ring light at substrate is dim
 STEPS        = 16       # 4×4 Bayer matrix — 16 unique threshold levels
 OUTPUT_DIR   = "/home/ericview/cal_logs"
@@ -472,27 +476,31 @@ def run_densitometer():
         # No pixels active — glass only in the light path.
         # This is the reference irradiance for all subsequent steps.
         oled.off()
-        time.sleep(SETTLE_SEC)
+        time.sleep(MEASURE_DELAY)
         r = read_as7341(0, 0)
         rows.append(r)
-        print(f"  step 000  density=  0%  "
+        time.sleep(max(0, SETTLE_SEC - MEASURE_DELAY))
+        print(f"  step 00/{STEPS}  density=  0%  "
               f"F2+F3={r['f2_f3_sum']:6d}  clear={r['clear']:6d}  [baseline]")
 
         # ── Steps 1–16: Bayer dither density sweep ───────────────
         for step in range(1, STEPS + 1):
 
-            # Render Bayer dither at step/16 density.
-            # Pixel density is uniform across full 128×64 surface.
+            # Render Bayer dither frame at step/16 density.
+            # Pixels are distributed uniformly across full 128×64 surface.
             pct = round(step / STEPS * 100)
             oled.density(step, STEPS)
 
-            # Settle: allow OLED pixels to stabilise before reading.
-            time.sleep(SETTLE_SEC)
-
+            # Hold frame — wait MEASURE_DELAY before reading so OLED
+            # pixels are fully stabilised. Reading happens mid-dwell,
+            # frame continues to display until full SETTLE_SEC elapsed.
+            time.sleep(MEASURE_DELAY)
             r = read_as7341(step, pct)
             rows.append(r)
 
-            # Print every step — only 16 total
+            # Hold remainder of dwell period after measurement
+            time.sleep(max(0, SETTLE_SEC - MEASURE_DELAY))
+
             marker = "  [max block]" if step == STEPS else ""
             print(f"  step {step:02d}/{STEPS}  density={pct:3d}%  "
                   f"F2+F3={r['f2_f3_sum']:6d}  clear={r['clear']:6d}{marker}")
