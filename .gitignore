@@ -223,3 +223,9 @@ cal_data/
 *.svg
 *.log
 
+# Photoplasm — calibration data and outputs
+cal_logs/
+*.csv
+
+# macOS
+.DS_Store
