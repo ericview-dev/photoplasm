@@ -5,7 +5,6 @@ photoplasm_cal01.py
 BioLight Calibration Script — Protophotoplasm platform
 Part of the BioLight optogenetic bacteriography exposure unit.
 HTGAA 2026 · Makerspace Charlotte BioArt Studio
-Eric Schneider + Karen Ingram
 ═══════════════════════════════════════════════════════════════════
 
 PURPOSE
@@ -328,19 +327,19 @@ def make_wedge_frame(step: int, total: int = 16) -> Image.Image:
     """
     Generate a 128×64 1-bit PIL image for calibration step N.
 
-    The image is black (opaque) except for N cumulative pie wedges
-    drawn as white (transparent / light-passing) sectors. Each wedge
-    spans 360/total degrees. Wedges accumulate clockwise from 12 o'clock.
+    The image is WHITE (opaque mask) except for N cumulative dark pie
+    wedge cutouts. Light passes through the dark sectors only — the
+    white areas block the LED output entirely.
 
     Biological meaning:
-      Step  1 → only wedge 1 open  → that zone gets 1 exposure unit
-      Step  2 → wedges 1+2 open    → zone 1 gets 2 units, zone 2 gets 1
-      Step 16 → all wedges open    → zone 1 has 16 units, zone 16 has 1
+      Step  1 → 1 dark wedge cut   → that zone gets 1 exposure unit
+      Step  2 → 2 dark wedges cut  → zone 1 gets 2 units, zone 2 gets 1
+      Step 16 → all wedges cut     → zone 1 has 16 units, zone 16 has 1
     After all 16 steps the plate holds a full logarithmic dose gradient.
 
     Geometry:
       Circle inscribed in OLED height (radius = 31px, centred at 64,32).
-      Remaining horizontal strip (128-64=64px each side) is always black.
+      Area outside the circle remains white (fully masked) at all steps.
 
     Args:
       step  — current step number (1–total), controls how many wedges open
@@ -349,7 +348,14 @@ def make_wedge_frame(step: int, total: int = 16) -> Image.Image:
     Returns:
       PIL Image, mode "1", size 128×64
     """
-    img    = Image.new("1", (OLED_W, OLED_H), 0)   # start fully black
+    # MASK LOGIC (corrected):
+    # OLED starts fully WHITE — the entire screen blocks light (opaque mask).
+    # Each step cuts a DARK wedge out of the mask — dark = transparent = light passes.
+    # Result: light only reaches the substrate through the dark wedge cutouts.
+    # Step 1 = one dark wedge open (1 exposure unit to that zone).
+    # Step 16 = all dark wedges open (full circle exposed, zone 1 has 16 units).
+    # This is the correct Stouffer step-wedge geometry for cumulative exposure.
+    img    = Image.new("1", (OLED_W, OLED_H), 1)   # start fully white (opaque mask)
     draw   = ImageDraw.Draw(img)
 
     cx, cy        = OLED_W // 2, OLED_H // 2        # centre = (64, 32)
@@ -362,7 +368,7 @@ def make_wedge_frame(step: int, total: int = 16) -> Image.Image:
         a1 = a0 + deg_per_wedge                     # wedge end angle
         draw.pieslice(
             [cx - r, cy - r, cx + r, cy + r],       # bounding box of circle
-            start=a0, end=a1, fill=1                 # fill=1 = white = light on
+            start=a0, end=a1, fill=0                 # fill=0 = dark = light passes through
         )
     return img
 
@@ -441,10 +447,16 @@ def leds_on(h, duty_pct: int = 100):
 
 def leds_off(h):
     """
-    Set PWM duty to 0% — MOSFET gate low, LEDs off.
-    Called explicitly at end of cycle and in finally block for safety.
+    Turn LEDs off — two-step for reliability:
+      1. tx_pwm duty to 0 stops the PWM signal
+      2. gpio_write pulls the gate pin explicitly low
+    The explicit gpio_write is necessary because lgpio's tx_pwm
+    at 0% duty can leave the pin in an indeterminate state on some
+    Pi 5 / Bookworm combinations, keeping the MOSFET partially on.
+    Explicit low guarantees the gate is pulled to GND.
     """
-    lgpio.tx_pwm(h, GPIO_PWM, PWM_FREQ_HZ, 0)
+    lgpio.tx_pwm(h, GPIO_PWM, PWM_FREQ_HZ, 0)     # stop PWM
+    lgpio.gpio_write(h, GPIO_PWM, 0)               # pull gate explicitly low
     print("[LED] OFF")
 
 
@@ -509,9 +521,9 @@ def run_cal_cycle():
         # ── STEP 3: 16-step wedge exposure sequence ───────────────
         for step in range(1, WEDGES + 1):
 
-            # Render and push the cumulative wedge frame to OLED.
-            # At step N, wedges 1 through N are open (white); the
-            # rest of the screen is black (opaque).
+            # Render and push the cumulative wedge mask to OLED.
+            # At step N, the OLED is white (blocking) everywhere except
+            # N dark wedge cutouts — light passes only through those zones.
             frame = make_wedge_frame(step, WEDGES)
             oled.show(frame)
 
