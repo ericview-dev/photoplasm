@@ -488,6 +488,12 @@ def run_densitometer():
         # ── Steps 1–16: Bayer dither density sweep ───────────────
         for step in range(1, STEPS + 1):
 
+            # Re-enable display before pushing frame.
+            # Step 0 sent 0xAE (display off) — must send 0xAF before
+            # any pixel data is visible. oled.on() restores display
+            # from RAM each step without requiring a full reinit.
+            oled.on()
+
             # Render Bayer dither frame at step/16 density.
             # Pixels are distributed uniformly across full 128×64 surface.
             pct = round(step / STEPS * 100)
