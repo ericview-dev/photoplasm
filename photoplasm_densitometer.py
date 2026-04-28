@@ -5,19 +5,20 @@ photoplasm_densitometer.py
 BioLight Transmission Densitometer — Protophotoplasm platform
 Part of the BioLight optogenetic bacteriography exposure unit.
 HTGAA 2026 · Makerspace Charlotte BioArt Studio
-Eric Schneider 
+Eric Schneider
 ═══════════════════════════════════════════════════════════════════
 
 PURPOSE
 -------
 Characterises the OLED as a variable neutral density filter by
 sweeping pixel density from 0% (display off, glass only) to 100%
-(all pixels fully lit, maximum block) in 100 discrete steps.
+(all pixels fully lit, maximum block) in 16 discrete Bayer-dithered
+steps.
 
 At each step the AS7341 spectral sensor measures delivered irradiance
-at the substrate plane. The resulting 100-point curve answers the
-question: does OLED pixel density linearly attenuate 470nm light,
-and by how much per step?
+at the substrate plane. The resulting 17-point curve (step 0 + 16
+steps) answers the question: does OLED pixel density linearly
+attenuate 470nm light, and by how much per step?
 
 This is the optical equivalent of a densitometer sensitometric sweep
 — the same principle used in photographic film characterisation.
@@ -28,55 +29,45 @@ optically neutral at 470nm regardless of pixel state.
 
 WHAT EACH STEP DOES
 -------------------
-  Step 0   — OLED display off (0xAE) — glass only, no pixels
-  Step 1   — 1% of pixels lit (1/100 of OLED area white)
-  Step 2   — 2% of pixels lit
+  Step 0  — OLED display off (0xAE) — glass only, no pixels
+  Step 1  — 1/16 pixels lit  (~6.25% density)
+  Step 2  — 2/16 pixels lit  (~12.5% density)
   ...
-  Step 100 — all pixels lit (fully white — maximum block state)
+  Step 16 — all pixels lit   (100% density — maximum block state)
 
-Pixel density is rendered as horizontal bands filling the OLED
-from top to bottom. At step N, the top N% of rows are white,
-the remainder are black. This gives a clean, repeatable density
-ramp that is independent of wedge geometry.
+DENSITY FRAME GEOMETRY — 4×4 BAYER ORDERED DITHER
+---------------------------------------------------
+  Pixel density is rendered using a 4×4 Bayer ordered dither matrix.
+  At step N (1–16), pixels are lit where the Bayer threshold value
+  for that pixel position is less than (N/16 × 256).
 
-CYCLE SEQUENCE
---------------
-  1. Hardware init — GPIO, SPI (OLED), I2C (AS7341)
-  2. LEDs ON at 100% PWM via IRLZ44N / GPIO18
-  3. Warm-up settle (WARMUP_SEC)
-  4. Step 0: OLED off → settle → AS7341 read → log
-  5. Steps 1–100: render density frame → settle → read → log
-  6. OLED OFF (display-off command)
-  7. LEDs OFF (PWM 0 + explicit gpio_write low)
-  8. Compute and print density response curve summary
-  9. Write timestamped CSV
+  The 4×4 Bayer matrix tiles across the full 128×64 OLED surface:
+    [  0, 128,  32, 160 ]
+    [192,  64, 224,  96 ]
+    [ 48, 176,  16, 144 ]
+    [240, 112, 208,  80 ]
 
-DENSITY FRAME GEOMETRY
------------------------
-  OLED is 128×64 pixels. At step N (1–100):
-    lit_rows = round(64 × N / 100)
-    Top lit_rows rows = white (1)
-    Remaining rows    = black (0)
-  Step 0: display-off command — no pixels active at all.
-  Step 100: all 64 rows white = fully lit = same as cal02 State 2.
+  Each matrix cell has a unique threshold (0–240 in steps of 16),
+  so exactly 1/16 of pixels are added at each step. The pattern is
+  spatially uniform across the entire display — the sensor sees the
+  same integrated field regardless of position under the OLED.
 
-  This horizontal band approach avoids the wedge geometry problem
-  identified in the cal01 step-wedge tests — the sensor sees the
-  integrated field, not individual geometric sectors.
+  This eliminates the sensor geometry bias that invalidated the
+  step-wedge and horizontal-band approaches in earlier tests.
+
+  Step 0: display-off command (0xAE) — no pixels active at all.
+  Step 16: all 128×64 pixels white — same as cal02 State 2.
 
 EXPECTED RESULTS
 ----------------
   If OLED is optically neutral at 470nm (as cal02 suggested):
-    F2+F3 will be flat across all 100 steps — slope ≈ 0
-    All steps ≈ Step 0 baseline
+    F2+F3 flat across all 16 steps — slope ≈ 0, R² < 0.3
 
   If OLED attenuates 470nm proportionally:
-    F2+F3 will decrease as step increases — negative slope
-    Step 100 will be measurably lower than Step 0
+    F2+F3 decreases as step increases — negative slope
+    Step 16 measurably lower than Step 0
 
-  The slope of the F2+F3 vs step regression line is the key metric.
-  A slope of 0 confirms optical neutrality.
-  A non-zero slope quantifies attenuation per 1% pixel density.
+  The regression slope and R² are computed and printed automatically.
 
 PIN ASSIGNMENTS — NS-03 v6 Pi 5
 ---------------------------------
@@ -122,8 +113,8 @@ CLI USAGE
     sudo python3 photoplasm_densitometer.py --settle 1.0
     python3 photoplasm_densitometer.py --dry-run
 
-  Total run time ≈ (100 × SETTLE_SEC) + warmup + overhead
-  Default: ~55 seconds at 0.5s settle per step.
+  Total run time ≈ (17 × SETTLE_SEC) + warmup + overhead
+  Default: ~12 seconds at 0.5s settle per step.
 
   Ctrl+C exits cleanly — LEDs and OLED powered off by finally block.
 """
@@ -189,9 +180,9 @@ _args = _parser.parse_args()
 PWM_DUTY_PCT = 100      # LED brightness — keep at 100% for densitometer
 PWM_FREQ_HZ  = 1000     # MOSFET gate switching frequency
 WARMUP_SEC   = 2.0      # LED warm-up settle after power on
-SETTLE_SEC   = 0.5      # settle per step — 0.5s × 100 steps = ~55s total
+SETTLE_SEC   = 0.5      # settle per step — 0.5s × 16 steps = ~12s total
 AS7341_GAIN  = "256X"   # maximum gain — ring light at substrate is dim
-STEPS        = 100      # number of density steps (0–100)
+STEPS        = 16       # 4×4 Bayer matrix — 16 unique threshold levels
 OUTPUT_DIR   = "/home/ericview/cal_logs"
 
 # ── Apply CLI overrides ───────────────────────────────────────────
@@ -277,18 +268,41 @@ class OLED:
         self._cmd(0x22); self._cmd(0); self._cmd(7)
         self._data(buf)
 
-    def density(self, pct: int):
+    def density(self, step: int, total: int = 16):
         """
-        Render a horizontal band density frame at pct% (1–100).
-        Top pct% of rows are white (lit), remainder black.
-        At pct=100 all rows are white — same as full white mask.
-        At pct=0 use off() instead — no pixels active.
+        Render a Bayer ordered dither frame at density step N of total.
+
+        Uses a 4×4 Bayer matrix tiled across the full 128×64 OLED.
+        At step N, a pixel is lit (white) where its Bayer threshold
+        value is less than (N / total × 256).
+
+        Bayer 4×4 matrix (threshold values 0–240):
+          [  0, 128,  32, 160 ]
+          [192,  64, 224,  96 ]
+          [ 48, 176,  16, 144 ]
+          [240, 112, 208,  80 ]
+
+        At step 1:  ~6.25% of pixels lit  (1/16 of matrix cells)
+        At step 8:  ~50%   of pixels lit
+        At step 16: 100%   of pixels lit  (same as full white)
+
+        Pixel density is spatially uniform across the entire display —
+        the sensor sees the same integrated field regardless of position.
+        This eliminates the geometry bias from horizontal bands and wedges.
         """
-        img      = Image.new("1", (OLED_W, OLED_H), 0)
-        lit_rows = max(0, min(OLED_H, round(OLED_H * pct / 100)))
-        if lit_rows > 0:
-            draw = ImageDraw.Draw(img)
-            draw.rectangle([0, 0, OLED_W - 1, lit_rows - 1], fill=1)
+        BAYER = [
+            [  0, 128,  32, 160],
+            [192,  64, 224,  96],
+            [ 48, 176,  16, 144],
+            [240, 112, 208,  80],
+        ]
+        threshold = step / total * 256
+        img       = Image.new("1", (OLED_W, OLED_H), 0)
+        pixels    = img.load()
+        for y in range(OLED_H):
+            for x in range(OLED_W):
+                if BAYER[y % 4][x % 4] < threshold:
+                    pixels[x, y] = 1
         self.show(img)
 
     def off(self):
@@ -415,10 +429,10 @@ def linear_regression(xs, ys):
 # ══════════════════════════════════════════════════════════════════
 def run_densitometer():
     """
-    Execute one complete OLED transmission densitometer sweep.
+    Execute one complete OLED Bayer dither transmission densitometer sweep.
 
     Sweeps OLED pixel density from 0% (display off) to 100%
-    (fully white) in 100 steps. AS7341 reads at each step.
+    (fully white) in 16 Bayer-dithered steps. AS7341 reads at each step.
     Linear regression on F2+F3 vs density determines whether
     the OLED meaningfully attenuates 470nm light.
     """
@@ -429,7 +443,7 @@ def run_densitometer():
     est_time = round((STEPS + 1) * SETTLE_SEC + WARMUP_SEC + 3)
     print(f"\n── photoplasm_densitometer ──")
     print(f"Gain: {AS7341_GAIN} · PWM: {PWM_DUTY_PCT}% · "
-          f"Settle: {SETTLE_SEC}s · Steps: {STEPS+1} (0–100)")
+          f"Settle: {SETTLE_SEC}s · Steps: {STEPS+1} (0–{STEPS}) · Bayer 4×4 dither")
     print(f"Estimated run time: ~{est_time}s")
 
     # ── Hardware init ─────────────────────────────────────────────
@@ -464,24 +478,24 @@ def run_densitometer():
         print(f"  step 000  density=  0%  "
               f"F2+F3={r['f2_f3_sum']:6d}  clear={r['clear']:6d}  [baseline]")
 
-        # ── Steps 1–100: density sweep ────────────────────────────
+        # ── Steps 1–16: Bayer dither density sweep ───────────────
         for step in range(1, STEPS + 1):
 
-            # Render horizontal band at step% density.
-            # Top step% of OLED rows are white, rest black.
-            oled.density(step)
+            # Render Bayer dither at step/16 density.
+            # Pixel density is uniform across full 128×64 surface.
+            pct = round(step / STEPS * 100)
+            oled.density(step, STEPS)
 
             # Settle: allow OLED pixels to stabilise before reading.
             time.sleep(SETTLE_SEC)
 
-            r = read_as7341(step, step)
+            r = read_as7341(step, pct)
             rows.append(r)
 
-            # Progress indicator every 10 steps
-            marker = "  [max block]" if step == 100 else ""
-            if step % 10 == 0 or step == 1 or step == 100:
-                print(f"  step {step:03d}  density={step:3d}%  "
-                      f"F2+F3={r['f2_f3_sum']:6d}  clear={r['clear']:6d}{marker}")
+            # Print every step — only 16 total
+            marker = "  [max block]" if step == STEPS else ""
+            print(f"  step {step:02d}/{STEPS}  density={pct:3d}%  "
+                  f"F2+F3={r['f2_f3_sum']:6d}  clear={r['clear']:6d}{marker}")
 
         # ── OLED OFF, LEDs OFF ────────────────────────────────────
         oled.off()
@@ -515,7 +529,7 @@ def run_densitometer():
 
     print("\n── Densitometer results ──")
     print(f"  Step 0   (OLED off)    F2+F3 = {baseline:6d}  [reference]")
-    print(f"  Step 100 (OLED white)  F2+F3 = {max_step:6d}")
+    print(f"  Step 16  (OLED white)  F2+F3 = {max_step:6d}")
     print(f"  Delta                          {delta:+6d}  ({delta_pct:+.1f}%)")
     print(f"  Regression slope               {slope:+.4f} counts / 1% density")
     print(f"  R²                             {r_sq:.4f}")
