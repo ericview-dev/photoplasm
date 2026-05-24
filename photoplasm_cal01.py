@@ -181,7 +181,7 @@ WEDGES       = 16     # number of cumulative exposure steps
                       # each step opens one additional 22.5° pie wedge
                       # 16 steps × 22.5° = full 360° circle at step 16
 
-OUTPUT_DIR   = "/home/ericview/cal_logs"
+OUTPUT_DIR   = "/home/pi/cal_logs"          # configure this for your Pi username
                       # timestamped CSVs are written here
                       # directory is created automatically if absent
 

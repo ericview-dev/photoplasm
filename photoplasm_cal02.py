@@ -198,7 +198,7 @@ SETTLE_SEC   = 2.0      # settle between state changes
 AS7341_GAIN  = "256X"   # high gain — ring light at agar base is dim
                          # adjust until state 1 reads 1000–50000 counts
 K_FACTOR     = 1.0      # µW/cm² per count — set after reference measurement
-OUTPUT_DIR   = "/home/ericview/cal_logs"
+OUTPUT_DIR   = "/home/pi/cal_logs"          # configure this for your Pi username
 
 # ── Apply CLI overrides ───────────────────────────────────────────
 if _args.pwm    is not None: PWM_DUTY_PCT = _args.pwm

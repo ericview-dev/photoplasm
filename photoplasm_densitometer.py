@@ -184,7 +184,7 @@ SETTLE_SEC   = 5.0      # seconds each Bayer frame is held on OLED
                          # read taken at 90% of dwell (MEASURE_DELAY = SETTLE_SEC × 0.9)
 AS7341_GAIN  = "256X"   # maximum gain — ring light at substrate is dim
 STEPS        = 16       # 4×4 Bayer matrix — 16 unique threshold levels
-OUTPUT_DIR   = "/home/ericview/cal_logs"
+OUTPUT_DIR   = "/home/pi/cal_logs"          # configure this for your Pi username
 
 # ── Apply CLI overrides ───────────────────────────────────────────
 if _args.gain   is not None: AS7341_GAIN  = _args.gain
