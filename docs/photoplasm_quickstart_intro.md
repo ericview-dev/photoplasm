@@ -92,5 +92,5 @@ Welcome to the platform.
 
 *Photoplasm · An open platform for biosensor-driven spatial imaging.*
 *MIT License · github.com/ericview-dev/photoplasm*
-*BioArt Studio · MakerSpace Charlotte · Genspace NYC*
-*Eric Schneider · HTGAA 2026*
+*BioArt Studio · MakerSpace Charlotte 
+*Eric Schneider · HTGAA 2026* · Node: Genspace NYC*
