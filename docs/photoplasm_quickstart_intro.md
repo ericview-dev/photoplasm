@@ -3,13 +3,14 @@
 
 &nbsp;
 
+
 **photo** (light) — the energy that drives the system.
 
 **plasma** (formed living matter) — the substance of cells.
 
 ---
 
-**Photoplasm** is a coined term that carries two simultaneous meanings, both accurate. At the substrate level, it describes any light-responsive biological material — living cells or cell-free systems — that records a spatially patterned light exposure and produces a measurable output: fluorescence, pigment, enzymatic activity, or any biosensor-driven response. At the molecular level, it describes the light-responsive circuits within those systems: with any light-responsive synthetic biological platform, including those engineered specifically to calibrate and test the device in the most optimized and controlled manner. The instrument that delivers, patterns, and measures that light takes its name from both meanings.
+**Photoplasm** is a coined term that carries two simultaneous meanings. At the substrate level, it describes any light-responsive biological material — living cells or cell-free systems — that records a spatially patterned light exposure and produces a measurable output: fluorescence, pigment, enzymatic activity, or any biosensor-driven response. At the molecular level, it describes the light-responsive circuits within those systems: with any light-responsive synthetic biological platform, including those engineered specifically to calibrate and test the device in the most optimized and controlled manner. The instrument that delivers, patterns, and measures that light takes its name from both meanings.
 
 ---
 
