@@ -43,6 +43,7 @@ MAX_RUNTIME_S = 1800             # heating-phase backstop (30 min)
 PLATEAU_WINDOW_S = 120           # plateau look-back window
 PLATEAU_BAND_C = 0.3             # plateau if temp range over window < this
 HOLD_BAND_C = 0.5                # default hysteresis for the hold phase
+COOLDOWN_CAP_S = 1800            # cooldown time cap (30 min) if baseline not reached
 # ---------------------------------------------------------------------------
 
 
@@ -165,14 +166,16 @@ def run(pulse_seconds=None, target_c=None, hold_seconds=0.0,
                     print("%7.1fs   %6.2f C   [heating]" % (elapsed, temp))
                     last_log = elapsed
                     history.append((elapsed, temp))
-                    if not pulse_seconds:
+                    # Plateau detection is ONLY for full-run mode (no target). In target
+                    # mode it must never fire - early thermal-lag flat spots look like
+                    # plateaus and would abort the climb before reaching target.
+                    if not pulse_seconds and not target_c:
                         window = [t for (e, t) in history if elapsed - e <= PLATEAU_WINDOW_S]
                         if len(window) >= 5 and (max(window) - min(window)) < PLATEAU_BAND_C:
                             set_gate(0)
                             t_reach = elapsed
-                            log(temp, "heating", "PLATEAU_BELOW_TARGET" if target_c else "PLATEAU_REACHED")
+                            log(temp, "heating", "PLATEAU_REACHED")
                             print("Plateau ~%.2f C at %.1fs - gate LOW." % (temp, elapsed))
-                            do_cooldown = bool(target_c)
                             break
                 time.sleep(0.25)
 
@@ -211,14 +214,21 @@ def run(pulse_seconds=None, target_c=None, hold_seconds=0.0,
                 print("\nHold complete - gate LOW.")
 
             # ================= COOLDOWN (gate LOW) =================
+            # Cool until temp returns to the baseline (initial) temperature, with a
+            # generous time cap as a backstop. If --cooldown SEC is given, use that
+            # fixed span instead.
             if do_cooldown and t_reach is not None:
                 set_gate(0)
-                cool_span = cooldown_seconds if cooldown_seconds else t_reach
                 cool_start = time.time()
-                log(None, "cooling", "COOLDOWN_START %.0fs (gate LOW)" % cool_span)
-                print("\n>>> GATE LOW - cooldown for %.0fs\n" % cool_span)
+                cap = cooldown_seconds if cooldown_seconds else COOLDOWN_CAP_S
+                if cooldown_seconds:
+                    log(None, "cooling", "COOLDOWN_START fixed %.0fs (gate LOW)" % cap)
+                    print("\n>>> GATE LOW - cooldown for %.0fs\n" % cap)
+                else:
+                    log(None, "cooling", "COOLDOWN_START to baseline %.2f C (cap %.0fs)" % (t0, cap))
+                    print("\n>>> GATE LOW - cooldown until back to baseline %.2f C (cap %.0fs)\n" % (t0, cap))
                 last_log = time.time() - start
-                while (time.time() - cool_start) < cool_span:
+                while (time.time() - cool_start) < cap:
                     elapsed = time.time() - start
                     temp = read_temp()  # gate already LOW; a bad read is not a hazard here
                     if elapsed - last_log >= LOG_INTERVAL_S:
@@ -226,7 +236,15 @@ def run(pulse_seconds=None, target_c=None, hold_seconds=0.0,
                         shown = ("%6.2f C" % temp) if temp is not None else "  --  "
                         print("%7.1fs   %s   [cooling]" % (elapsed, shown))
                         last_log = elapsed
+                    # stop once we've returned to (or below) the starting temperature
+                    if not cooldown_seconds and temp is not None and temp <= t0:
+                        log(temp, "cooling", "COOLDOWN_REACHED_BASELINE")
+                        print("Returned to baseline %.2f C at %.1fs." % (t0, elapsed))
+                        break
                     time.sleep(0.25)
+                else:
+                    log(None, "cooling", "COOLDOWN_CAP_REACHED")
+                    print("Cooldown time cap reached.")
                 log(None, "cooling", "COOLDOWN_END")
                 print("\nCooldown complete.")
 
