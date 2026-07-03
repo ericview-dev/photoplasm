@@ -44,6 +44,7 @@ PLATEAU_WINDOW_S = 120           # plateau look-back window
 PLATEAU_BAND_C = 0.3             # plateau if temp range over window < this
 HOLD_BAND_C = 0.5                # default hysteresis for the hold phase
 COOLDOWN_CAP_S = 1800            # cooldown time cap (30 min) if baseline not reached
+HOLD_CAP_MARGIN_S = 15           # absolute hold guard: hold can never exceed hold+this
 # ---------------------------------------------------------------------------
 
 
@@ -182,11 +183,18 @@ def run(pulse_seconds=None, target_c=None, hold_seconds=0.0,
             # ================= HOLD (bang-bang) =================
             if do_cooldown and target_c and hold_seconds and t_reach is not None:
                 hold_start = time.time()
-                log(None, "hold", "HOLD_START %.0fs at %.1f C (band %.1f)" % (hold_seconds, target_c, band_c))
+                hold_hard_cap = hold_start + hold_seconds + HOLD_CAP_MARGIN_S  # absolute wall
+                log(None, "hold", "HOLD_START %.0fs at %.1f C (band %.1f, hard cap +%.0fs)"
+                    % (hold_seconds, target_c, band_c, HOLD_CAP_MARGIN_S))
                 print("\n>>> HOLD %.0fs at %.1f C (bang-bang, band %.1f)\n" % (hold_seconds, target_c, band_c))
                 last_log = time.time() - start
                 on_low = target_c - band_c   # turn heater ON below this
                 while (time.time() - hold_start) < hold_seconds:
+                    if time.time() >= hold_hard_cap:   # absolute runtime guard
+                        set_gate(0)
+                        log(read_temp(), "hold", "HOLD_HARD_CAP_GATE_LOW")
+                        print("HOLD hard cap reached - gate forced LOW.")
+                        break
                     elapsed = time.time() - start
                     temp = read_temp()
                     if temp is None:
