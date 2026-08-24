@@ -438,6 +438,11 @@ section is **Ø149.82 mm** against this ring's **Ø149.78 mm** bore: **+0.04 mm 
 friction fit as designed. The ring slides along **76.19 mm** of straight spacer, giving **48.79 mm** of
 adjustable travel once its own 27.40 mm height is accounted for.
 
+⏸ **That travel is the optical tuning range, in active use.** This part is currently a *tuning
+fixture*: the emitter height is being set empirically for best projection convergence, and only then
+will it be recorded and locked in — see [D-15](#d-15-light-spacer-large). Expect this ring to be
+revised or replaced at lock-in; the fit that adjusts well is not the fit that holds permanently.
+
 ☐ **The enlarger body's opening is still unrecorded** — the 159.94 mm OD must not pass through it, or
 the assembly drops and the part does nothing. That dimension lives on inherited hardware, not CAD.
 **PETG**, per the device-wide rule at the top — and load-bearing here, since the retention is an interference fit that a softer filament would relax out of. ☐ Print orientation not recorded.
@@ -496,14 +501,15 @@ material rule; this part is squarely in the light path and must be PETG.
 `lightspacer_large.stl` · 149.7 × 149.8 × 92.1 mm
 
 **The column that raises the Cree light ring to optical height** — setting the throw for projection
-convergence. A plain tube with a **stepped/tapered outer diameter**, and it is the part that ties the
+convergence. ⏸ **That height is deliberately tunable and not yet locked in:** the optimum is being
+found empirically, then recorded, and the parts revised to suit. A plain tube with a **stepped/tapered outer diameter**, and it is the part that ties the
 whole upper assembly together: [part 14](#14--cree-light-ring) wedges onto its top,
 [part 13](#13--light-spacer-lower-ring) grips its lower section and stops it dropping into the
 enlarger body.
 
 | Spec | Value |
 |---|---|
-| Height | **92.07 mm** |
+| Height | **92.07 mm** — ⏸ **provisional, tunable by design** (see [D-15](#d-15-light-spacer-large)) |
 | Bore (clear aperture) | **Ø142.84 mm**, constant full height |
 | Wall | **3.49 mm** |
 | OD — lower, straight | **Ø149.82 mm** over **76.19 mm** |
@@ -1214,6 +1220,9 @@ shift from a change of filament batch, nozzle temperature, or ambient conditions
 
 ☐ Print a **short test coupon** of each joint — 10 mm of the top taper and 10 mm of the lower
   straight section — before committing to a 92 mm tube and a 174 mm ring.
+☐ **Target the tuning phase first, not the final fit.** While the height is still being set, part 13's
+  joint needs to be *movable* — a fit calibrated to hold permanently will fight every adjustment.
+  Aim for firm-but-slidable now; tighten at lock-in.
 ☐ Record the **measured** OD you actually achieve versus the modelled 149.82 / 149.26, and the
   resulting fit (free / snug / immovable) for each joint.
 ☐ Decide which way to err. These joints fail in opposite directions: the **taper** tolerates being
@@ -1221,12 +1230,39 @@ shift from a change of filament batch, nozzle temperature, or ambient conditions
   undersize there and the retaining ring will not hold the load. If a compensation is needed, bias
   toward the straight section.
 
+### ⏸ Height is TUNABLE BY DESIGN — lock-in pending
+
+**The 92.07 mm is provisional and intended to be.** Optimal optical height is being determined
+empirically, not calculated up front: the emitter is moved until projection convergence at the
+substrate plane is best, and *then* the number gets recorded.
+
+That is what the adjustable joint is for. Part 13's **48.79 mm of travel** is not slop to be
+engineered out — **it is the tuning range**, and it stays open until the optimum is found.
+
+**Planned lock-in.** Once the optimal height is determined:
+
+☐ **Record the number** — the measured emitter height, and the convergence result that justified it.
+☐ **Then revise the parts to suit.** The outcome may be a **longer** tube, a **shorter** one, a
+  **better-fitting** joint, or a fixed stop replacing the adjustment entirely. None of that is decided
+  yet, and none of it should be pre-empted.
+
+> ⚠ **The fit that tunes well is not the fit that locks well.** These are different requirements and
+> the design currently has to serve both:
+>
+> | Phase | What part 13's joint must do |
+> |---|---|
+> | **Tuning (now)** | Slide, re-grip, and hold position through **repeated** adjustment |
+> | **Locked (later)** | Hold one position permanently under sustained load |
+>
+> Repeated sliding **burnishes PETG** — each adjustment cycle wears the interface slightly, so a fit
+> that grips on the first setting can be looser by the tenth. Do not tighten the fit to solve this
+> during tuning; that makes adjustment harder and accelerates the wear. **Solve it at lock-in**, with
+> a mechanical stop, a clamping screw, or a reprint at the final height.
+
 ### ☐ Still open
 
 ☐ **Enlarger body opening** — still the one unrecorded dimension in this sub-assembly (see
   [D-13](#d-13-light-spacer-lower-ring)). Part 13's Ø159.94 OD must exceed it.
-☐ **Optical height not derived.** 92.07 mm is recorded as built, but the throw calculation that
-  justifies it is not written down anywhere. If convergence ever needs re-tuning, the reasoning has to
-  be reconstructed from scratch. Record the intended emitter-to-condenser distance.
+**Height is deliberately tunable — see below.** 92.07 mm is a *starting point*, not a derived value.
 ☐ **PETG, per the device-wide rule** — and load-bearing twice over here: this tube carries the light
   ring's weight *and* both interference fits. Creep in the wall relaxes both joints at once.
