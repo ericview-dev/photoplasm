@@ -21,6 +21,12 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 
 IDs are stable labels assigned in order of addition, not assembly order.
 
+### Also in this folder, not a numbered part
+
+| File | What it is | Status |
+|---|---|---|
+| `thermalcut_sensorholder.3mf` | Bambu Studio project for the **superseded** two-file part 11 workflow | ☐ **Review** — D-11 previously recorded this as deleted; it is still here. It is scaffolding for the merge-at-slice-time method that `tempcut_combined_holder.stl` replaced, so it is probably a delete — but it is also the only remaining artefact carrying part 11's pre-merge geometry (see the source-CAD warning in [D-11](#d-11-temp-cutoff-ring)) |
+
 ## Stack order
 
 Bottom to top. Confirmed 2026-08-18 against the Fusion coordinates still carried in the STLs.
@@ -305,8 +311,11 @@ layer of its own. 105.0 mm OD against the spacer's 105.1 mm ID.
 
 > ✅ **Revised 2026-08-21 — now a single file.** `tempcut_combined_holder.stl` is the ring and the
 > sensor pocket merged into one printable mesh, replacing the old load-two-files-and-merge-in-the-slicer
-> workflow. **The composite caveat is retired.** Superseded: `tempcut_ring.stl` + `tempcut.stl`
-> (kept as source, superseded).
+> workflow. **The composite caveat is retired.**
+>
+> 🗑 **Superseded halves deleted 2026-08-24** — `tempcut_ring.stl`, `tempcut.stl` and
+> `tempcut_ring.step` are gone from the folder. They were reference only; the merged mesh is the
+> single printable. ⚠ See D-11: this leaves part 11 with **no source geometry of any kind**.
 
 | Spec | Value |
 |---|---|
@@ -315,7 +324,7 @@ layer of its own. 105.0 mm OD against the spacer's 105.1 mm ID.
 | Retains | KSD9700 thermal cutoff, body ~20 × 7.75 × 3.6 mm |
 | Fasteners | None — snap fit |
 | Assembly | **Single mesh** — merged in CAD, not at slice time |
-| Source | `tempcut_ring.stl` + `tempcut.stl` — **superseded, kept for reference only** |
+| Source | ⚠ **None** — the superseded halves were deleted 2026-08-24 and no STEP/F3D of the merged part exists (D-11) |
 
 ☐ **Superseded by design intent** — see D-11. A simplified spacer that holds the sensor *and* routes
 its leads is planned, which would absorb this part and part 06 into one.
@@ -824,19 +833,31 @@ the sensor pocket in one file. Slice that one file and you get the whole part.
 Previously the two halves were joined **in Bambu Studio at slice time**, so `tempcut_ring.stl` alone
 yielded a plain ring with no sensor retention. That trap is gone.
 
-**Folder cleaned 2026-08-21.** The 8 `(Assembly)_BodyN` exports and the Bambu project
-`thermalcut_sensorholder.3mf` have been removed now that the merged mesh exists. That is the right
-call — they were the scaffolding for a workflow the combined file replaces.
+**Folder cleaned 2026-08-21.** The 8 `(Assembly)_BodyN` exports were removed once the merged mesh
+existed — they were scaffolding for a workflow the combined file replaces.
 
-Still present as reference, **not printables**: `tempcut_ring.stl` and `tempcut.stl`. Their exports
-are not co-located (the ring sits at z −1131 while the pocket sits at z 0), so do not read those
-coordinates as stack positions.
+**Superseded halves deleted 2026-08-24.** `tempcut_ring.stl`, `tempcut.stl` and `tempcut_ring.step`
+are no longer in the folder. They were reference only — never printables — and their exports were not
+co-located anyway (the ring sat at z −1131, the pocket at z 0), so they were a standing trap for
+anyone reading those coordinates as stack positions. Nothing printable was lost.
 
-☐ **Source CAD for part 11 is now thin.** `tempcut_ring.f3d` was deleted, and the removed 3MF
-referenced a `tempcut_ring_parts.step` that was never in this folder. What remains is
-`tempcut_ring.step` — which is the *ring alone*, not the merged geometry. **There is no source file
-for `tempcut_combined_holder.stl`.** If the merge has to be revised, it starts from an STL. Re-export
-a STEP or F3D of the combined part.
+> ### ⚠ ☐ Part 11 now has NO source geometry — the merged STL is the only artefact
+> This was already thin and the 2026-08-24 cleanup closed the last door. `tempcut_ring.f3d` was
+> deleted earlier; the removed 3MF referenced a `tempcut_ring_parts.step` that was never in this
+> folder; and `tempcut_ring.step` — the *ring alone*, not the merged geometry — has now gone too.
+>
+> **`tempcut_combined_holder.stl` is the whole of part 11's existence.** A revision to the merge
+> starts from a mesh, not from CAD.
+>
+> **One hedge remains:** `thermalcut_sensorholder.3mf` is still in the folder (D-11 previously
+> recorded it as deleted — it was not). As the Bambu project for the pre-merge workflow it carries the
+> two halves' geometry, so it is the last thing standing between part 11 and mesh-only. **Do not
+> delete it until a STEP or F3D of the combined part exists.**
+>
+> **Do this if the Fusion 360 design still exists in the cloud: re-export a STEP or F3D of the
+> combined part.** If it does not, part 11 is mesh-only permanently — which matters because D-11
+> already flags it as *superseded by design intent* (a simplified spacer absorbing parts 06 and 11),
+> and that redesign would have to be modelled from scratch regardless.
 
 ### ✅ RESOLVED 2026-08-18 — the leads have an exit
 
