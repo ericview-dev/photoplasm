@@ -58,6 +58,7 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 11 | Temp Cutoff Ring | [`tempcut_combined_holder.stl`](tempcut_combined_holder.stl) | HTR |
 | 12 | Switch Box | [`switchbox.stl`](switchbox.stl) | ☐ |
 | 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring.stl`](lightspacer_lower_ring.stl) | OPT |
+| 14 | Cree Light Ring | [`Cree_lightring.stl`](Cree_lightring.stl) | OPT-LED |
 
 IDs are stable labels assigned in order of addition, not assembly order.
 
@@ -440,6 +441,53 @@ recorded anywhere yet.
 heater column.
 
 [More details → D-13](#d-13-light-spacer-lower-ring)
+
+---
+
+## 14 — Cree Light Ring
+
+`Cree_lightring.stl` · 174.6 × 174.6 × 42.9 mm
+
+**Carrier for the Cree XP-E2 470 nm emitter array** — the lamphouse replacement that seats the light
+source above the condenser. Largest part on the device.
+
+Measured from the mesh: an outer **skirt** with a **web plate** across it, a central **hub**, and a
+raised **ring** on top. 1,956 triangles, 6 distinct Z levels.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **174.62 mm** |
+| Skirt bore | **149.22 mm** |
+| Skirt wall | **12.70 mm** — exactly 0.500 in |
+| Skirt height | 32.20 mm (Z −12.70 → +19.50) |
+| Web plate | **3.20 mm** thick (Z +9.80 → +13.00), spanning to the skirt bore |
+| Central bore | **Ø9.97 mm** |
+| Central hub | **Ø37.77 mm**, rising to Z +19.60 |
+| Upper ring | Ø75.80 – Ø112.46 at Z +30.20 |
+| Edge notches | 2 × ~1.76 × 3.59 mm at the plate rim, mirrored about X — ☐ purpose not recorded (cable exit? keying?) |
+
+> ### ☐ Does this mate with part 13?
+> The skirt bore is **149.22 mm** and [part 13](#13--light-spacer-lower-ring)'s bore is **149.78 mm** —
+> **0.56 mm apart**. Two *internal* diameters that close, on two parts in the same light path, is
+> unlikely to be coincidence: it suggests both are sized around a common **Ø≈149 mm light spacer
+> tube**. But the tube itself is not in this folder and its OD is unrecorded, so the relationship is
+> inferred, not established.
+>
+> This matters because part 13 is described as a **friction** fit. If the tube is Ø149.2, part 13
+> would have 0.56 mm diametral clearance on it — a slip fit, not a friction one. **Measure the light
+> spacer's OD.** It either confirms the design or reveals that one of these two bores is wrong.
+
+Both this part and part 13 are walled in **exact imperial** (0.500 in and 0.200 in) while the rest of
+the printed stack is metric — consistent with both being dimensioned against the inherited **Bogen
+enlarger** hardware rather than the printed column.
+
+☐ **Emitter mounting not recorded.** No mounting-hole pattern for the Cree stars, the heat sink, or
+the fan was resolvable from the mesh at this level. Record how the array, sink and Carclo optics
+attach, and to which surface.
+☐ **Thermal path not recorded.** The Cree sink sheds **~3.3 W** into whatever carries it — see the
+material rule; this part is squarely in the light path and must be PETG.
+
+[More details → D-14](#d-14-cree-light-ring)
 
 ---
 
@@ -1035,3 +1083,52 @@ directions**, and right now the design is entirely on the adjustable side.
 
 ☐ Record whether the adjustment is set once at assembly or re-adjusted between configurations. That
 decides whether creep is a nuisance or a calibration problem.
+
+
+## D-14 Cree Light Ring
+
+`Cree_lightring.stl` — added 2026-08-24. **174.62 × 174.57 × 42.86 mm**, 1,956 triangles.
+
+Replaces the Bogen enlarger's original lamphouse. The Cree XP-E2 470 nm array and its Carclo
+diffuser optics sit here, above the condenser that collimates their output onto the mask.
+
+### Geometry, measured from the mesh
+
+Six distinct Z levels, all concentric on the axis (XY centre 0.00, 0.00):
+
+| Z | r_min | r_max | Reading |
+|---|---|---|---|
+| −12.70 | 74.61 | 87.31 | skirt, bottom face |
+| +9.80 | 5.00 | 74.61 | web plate, underside |
+| +13.00 | 5.00 | 74.61 | web plate, top — **3.20 mm thick** |
+| +19.50 | 74.61 | 87.31 | skirt, top face |
+| +19.60 | 5.00 | 18.90 | central hub |
+| +30.20 | 37.90 | 56.23 | upper ring |
+
+The skirt runs the full height (−12.70 → +19.50) while the web plate sits high within it, so the part
+has a **deep open underside** — about 22 mm of clear skirt below the plate. That volume is presumably
+where the emitter, sink and optics live, firing downward.
+
+### ☐ What the mesh cannot tell us
+
+Three things are needed before this part can be built or reconciled, and none are derivable from an
+STL:
+
+1. **Emitter mounting.** No resolvable hole pattern for the Cree stars, the heat sink, or the cooling
+   fan. Record the pattern, fastener spec, and which surface each attaches to.
+2. **The Ø≈149 mm light spacer.** See the mating question in the part 14 summary — the tube that both
+   this and part 13 appear to be sized around is not in this folder at all. **It is the one component
+   that would confirm or break both designs, and it is undocumented.**
+3. **The two edge notches** (~1.76 × 3.59 mm, mirrored about X at r ≈ 74.6). Cable exit is the obvious
+   guess — the emitter needs power in — but that is a guess.
+
+### ⚠ Thermal — PETG is load-bearing here
+
+The Cree sink sheds **~3.3 W** continuously, and this part carries it. The device-wide
+[PETG rule](#) applies with force: PLA's ~55–60 °C glass transition is a real risk against a
+continuously-dissipating sink in a semi-enclosed skirt, where convection is poor by design (the
+lamphouse is meant to be light-tight, not ventilated).
+
+☐ Record the measured temperature at the sink-to-PETG interface during a sustained run. The device
+guidance is to keep that interface **well below ~80 °C**; unlike the heater chamber, nothing here has
+a thermal cutoff to bound it.
