@@ -59,6 +59,7 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 12 | Switch Box | [`switchbox.stl`](switchbox.stl) | ☐ |
 | 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring.stl`](lightspacer_lower_ring.stl) | OPT |
 | 14 | Cree Light Ring | [`Cree_lightring.stl`](Cree_lightring.stl) | OPT-LED |
+| 15 | Light Spacer, Large | [`lightspacer_large.stl`](lightspacer_large.stl) | OPT |
 
 IDs are stable labels assigned in order of addition, not assembly order.
 
@@ -432,10 +433,13 @@ taper, no fastener features. 828 triangles.
 | Adjustment | Ring position on the spacer sets the spacer's depth in the body |
 | Profile | Straight cylinder, no lip or register |
 
-☐ **Record the mating diameters.** The retention is entirely an interference fit, so the two numbers
-that decide whether it works are not in this file: the **light spacer's OD** (against the 149.78 mm
-bore) and the **enlarger body's opening** (which the 159.94 mm OD must not pass through). Neither is
-recorded anywhere yet.
+✅ **Spacer OD resolved 2026-08-24** — it mates with [part 15](#15--light-spacer-large), whose lower
+section is **Ø149.82 mm** against this ring's **Ø149.78 mm** bore: **+0.04 mm interference**, a genuine
+friction fit as designed. The ring slides along **76.19 mm** of straight spacer, giving **48.79 mm** of
+adjustable travel once its own 27.40 mm height is accounted for.
+
+☐ **The enlarger body's opening is still unrecorded** — the 159.94 mm OD must not pass through it, or
+the assembly drops and the part does nothing. That dimension lives on inherited hardware, not CAD.
 **PETG**, per the device-wide rule at the top — and load-bearing here, since the retention is an interference fit that a softer filament would relax out of. ☐ Print orientation not recorded.
 ☐ Not placed in the stack-order table: it belongs to the light/optical path above the mask, not the
 heater column.
@@ -466,16 +470,12 @@ raised **ring** on top. 1,956 triangles, 6 distinct Z levels.
 | Upper ring | Ø75.80 – Ø112.46 at Z +30.20 |
 | Edge notches | 2 × ~1.76 × 3.59 mm at the plate rim, mirrored about X — ☐ purpose not recorded (cable exit? keying?) |
 
-> ### ☐ Does this mate with part 13?
-> The skirt bore is **149.22 mm** and [part 13](#13--light-spacer-lower-ring)'s bore is **149.78 mm** —
-> **0.56 mm apart**. Two *internal* diameters that close, on two parts in the same light path, is
-> unlikely to be coincidence: it suggests both are sized around a common **Ø≈149 mm light spacer
-> tube**. But the tube itself is not in this folder and its OD is unrecorded, so the relationship is
-> inferred, not established.
->
-> This matters because part 13 is described as a **friction** fit. If the tube is Ø149.2, part 13
-> would have 0.56 mm diametral clearance on it — a slip fit, not a friction one. **Measure the light
-> spacer's OD.** It either confirms the design or reveals that one of these two bores is wrong.
+> ### ✅ RESOLVED 2026-08-24 — it mates with part 15
+> The inferred Ø≈149 tube is real: it is [part 15](#15--light-spacer-large), added the same day. The
+> skirt bore of **149.22 mm** seats on the spacer's **tapered top OD**, which passes through 149.26 mm
+> at its narrowest. Both this joint and part 13's are cut to the **same +0.04 mm interference** — see
+> [D-15](#d-15-light-spacer-large) for the full mating table. Nothing was wrong; the two close bores
+> were two different stations on one tube.
 
 Both this part and part 13 are walled in **exact imperial** (0.500 in and 0.200 in) while the rest of
 the printed stack is metric — consistent with both being dimensioned against the inherited **Bogen
@@ -488,6 +488,43 @@ attach, and to which surface.
 material rule; this part is squarely in the light path and must be PETG.
 
 [More details → D-14](#d-14-cree-light-ring)
+
+---
+
+## 15 — Light Spacer, Large
+
+`lightspacer_large.stl` · 149.7 × 149.8 × 92.1 mm
+
+**The column that raises the Cree light ring to optical height** — setting the throw for projection
+convergence. A plain tube with a **stepped/tapered outer diameter**, and it is the part that ties the
+whole upper assembly together: [part 14](#14--cree-light-ring) wedges onto its top,
+[part 13](#13--light-spacer-lower-ring) grips its lower section and stops it dropping into the
+enlarger body.
+
+| Spec | Value |
+|---|---|
+| Height | **92.07 mm** |
+| Bore (clear aperture) | **Ø142.84 mm**, constant full height |
+| Wall | **3.49 mm** |
+| OD — lower, straight | **Ø149.82 mm** over **76.19 mm** |
+| OD — upper, tapered | **Ø149.82 → Ø149.26** over the top **15.88 mm** (≈**1.0° half-angle**) |
+
+### The fits — both cut to +0.04 mm
+
+| Joint | Bore | Spacer OD | Interference |
+|---|---|---|---|
+| **14** Cree light ring → spacer top | Ø149.22 | Ø149.26 | **+0.04 mm** |
+| **13** lower ring → spacer bottom | Ø149.78 | Ø149.82 | **+0.04 mm** |
+
+Two joints, two stations on one tube, **the same interference at each**. The shallow top taper is a
+**self-locking wedge**: the light ring starts easily at the narrow top and tightens as it is pushed
+down, which both centres it on the optical axis and grips it without a fastener.
+
+⚠ **+0.04 mm diametral is 0.02 mm radial — finer than FDM repeatability.** See
+[D-15](#d-15-light-spacer-large): in practice your printer's calibration, not the model, decides
+whether these come out tight, loose, or immovable.
+
+[More details → D-15](#d-15-light-spacer-large)
 
 ---
 
@@ -1132,3 +1169,64 @@ lamphouse is meant to be light-tight, not ventilated).
 ☐ Record the measured temperature at the sink-to-PETG interface during a sustained run. The device
 guidance is to keep that interface **well below ~80 °C**; unlike the heater chamber, nothing here has
 a thermal cutoff to bound it.
+
+
+## D-15 Light Spacer, Large
+
+`lightspacer_large.stl` — added 2026-08-24. **149.74 × 149.76 × 92.07 mm**, 1,002 triangles, three
+distinct Z levels.
+
+Sets the height of the Cree emitter above the condenser, which is what determines **projection
+convergence** at the substrate plane. Its 92 mm is therefore an optical dimension, not a structural
+one — changing it changes the throw.
+
+### Measured profile
+
+| Z | ID | OD | Section |
+|---|---|---|---|
+| 0.00 (top) | Ø142.84 | **Ø149.26** | narrow end of the taper |
+| −15.88 | — | **Ø149.82** | taper meets the straight section |
+| −92.07 (bottom) | Ø142.84 | **Ø149.82** | straight, full length |
+
+Only three Z levels, so the band between 0.00 and −15.88 is a single conical surface — a true taper,
+not a step. Half-angle ≈ **1.01°**.
+
+The **Ø142.84 mm bore is constant the full height**: the clear optical aperture, unobstructed.
+
+### Why the design works
+
+Both mating joints are cut to **+0.04 mm interference**, but they do different jobs:
+
+- **Top (part 14)** — the 1° taper is a **self-locking wedge**. The light ring's Ø149.22 skirt starts
+  at the tube's narrowest point and tightens as it descends, centring the emitter on the optical axis
+  and holding it without a fastener. Taper joints self-centre; a straight press fit does not.
+- **Bottom (part 13)** — a straight Ø149.82 section **76.19 mm** long. The retaining ring is 27.40 mm
+  tall, so it can be set anywhere across **48.79 mm** of travel. *That* is the adjustability: the
+  height at which the spacer is stopped from entering the body.
+
+### ⚠ 0.02 mm radial is below what FDM can hold
+
+This is the one thing to know before printing. **+0.04 mm diametral = 0.02 mm on radius**, an order
+of magnitude finer than typical FDM repeatability (~0.1–0.2 mm), and smaller than the dimensional
+shift from a change of filament batch, nozzle temperature, or ambient conditions.
+
+**So the model does not decide these fits — the printer does.** Expect to calibrate:
+
+☐ Print a **short test coupon** of each joint — 10 mm of the top taper and 10 mm of the lower
+  straight section — before committing to a 92 mm tube and a 174 mm ring.
+☐ Record the **measured** OD you actually achieve versus the modelled 149.82 / 149.26, and the
+  resulting fit (free / snug / immovable) for each joint.
+☐ Decide which way to err. These joints fail in opposite directions: the **taper** tolerates being
+  slightly undersize (it simply seats deeper), while the **straight friction section** does not —
+  undersize there and the retaining ring will not hold the load. If a compensation is needed, bias
+  toward the straight section.
+
+### ☐ Still open
+
+☐ **Enlarger body opening** — still the one unrecorded dimension in this sub-assembly (see
+  [D-13](#d-13-light-spacer-lower-ring)). Part 13's Ø159.94 OD must exceed it.
+☐ **Optical height not derived.** 92.07 mm is recorded as built, but the throw calculation that
+  justifies it is not written down anywhere. If convergence ever needs re-tuning, the reasoning has to
+  be reconstructed from scratch. Record the intended emitter-to-condenser distance.
+☐ **PETG, per the device-wide rule** — and load-bearing twice over here: this tube carries the light
+  ring's weight *and* both interference fits. Creep in the wall relaxes both joints at once.
