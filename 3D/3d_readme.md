@@ -57,7 +57,7 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 10 | Heater Circuit Holder | [`Heater_DFR0457.stl`](Heater_DFR0457.stl) | HTR |
 | 11 | Temp Cutoff Ring | [`tempcut_combined_holder.stl`](tempcut_combined_holder.stl) | HTR |
 | 12 | Switch Box | [`switchbox.stl`](switchbox.stl) | ☐ |
-| 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring.stl`](lightspacer_lower_ring.stl) | OPT |
+| 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring_draft.stl`](lightspacer_lower_ring_draft.stl) | OPT |
 | 14 | Cree Light Ring | [`Cree_lightring.stl`](Cree_lightring.stl) | OPT-LED |
 | 15 | Light Spacer, Large | [`lightspacer_large.stl`](lightspacer_large.stl) | OPT |
 
@@ -415,27 +415,40 @@ and [NS-04 readme](../../spaceplacer_repo/projects/cree_led/spaceplacer_ns04_blu
 
 ## 13 — Light Spacer Lower Ring
 
-`lightspacer_lower_ring.stl` · 159.9 × 159.9 × 27.4 mm
+`lightspacer_lower_ring_draft.stl` · 159.9 × 159.9 × 27.4 mm — **rev 2, drafted bore**
 
 **Retaining ring for the light spacer** — it stops the spacer slipping down into the **enlarger
-body**. Friction fit, and **adjustable**: its height on the spacer sets how deep the spacer sits.
+body**. **Press fit**, and **adjustable**: its height on the spacer sets how deep the spacer sits.
 
-Measured from the mesh: a **plain straight ring** — two Z levels, two radii, no register lip, no
-taper, no fastener features. 828 triangles.
+> ### 🔁 Rev 2 — 2026-08-24: drafted bore, because rev 1 slipped
+> **Rev 1's straight Ø149.78 bore did not hold.** Against the spacer's Ø149.82 that was +0.04 mm
+> diametral — 0.02 mm on radius, finer than FDM repeatability — so the fit landed wherever the print
+> happened to land, and in practice it landed loose.
+>
+> **Rev 2 tapers the bore at a 1.00° half-angle** — Ø149.74 at the top, narrowing to **Ø148.79** at
+> the bottom. Outside diameter is unchanged at Ø159.97, and the envelope is identical, so it drops
+> straight into the same place.
+>
+> **The taper narrows downward, which is the load direction.** The spacer's weight pushes it *down*
+> through the ring — into the narrowing bore — so the joint **self-tightens under exactly the load it
+> exists to resist**. Rev 1 had no such behaviour: a straight bore that slips once slips further.
+
+Measured from the mesh: 826 triangles, two Z levels, constant Ø159.97 OD, tapered bore.
 
 | Spec | Value |
 |---|---|
-| Outside diameter | **159.94 mm** |
-| Inside diameter | **149.78 mm** |
-| Wall | **5.08 mm** — exactly 0.200 in |
+| Outside diameter | **159.97 mm**, constant |
+| Bore — top | **Ø149.74 mm** |
+| Bore — bottom | **Ø148.79 mm** |
+| Bore draft | **1.00° half-angle**, narrowing downward |
+| Wall | 5.12 mm (top) → 5.59 mm (bottom) |
 | Height | **27.40 mm** |
-| Fasteners | None — **friction fit** |
+| Fasteners | None — **press fit**, self-tightening under load |
 | Adjustment | Ring position on the spacer sets the spacer's depth in the body |
-| Profile | Straight cylinder, no lip or register |
 
 ✅ **Spacer OD resolved 2026-08-24** — it mates with [part 15](#15--light-spacer-large), whose lower
-section is **Ø149.82 mm** against this ring's **Ø149.78 mm** bore: **+0.04 mm interference**, a genuine
-friction fit as designed. The ring slides along **76.19 mm** of straight spacer, giving **48.79 mm** of
+section is **Ø149.82 mm** straight. Against rev 2's tapered bore that is **+0.08 mm interference at the
+ring's top, rising to +1.03 mm at its bottom** — a wedge, not a constant fit. The ring slides along **76.19 mm** of straight spacer, giving **48.79 mm** of
 adjustable travel once its own 27.40 mm height is accounted for.
 
 ⏸ **That travel is the optical tuning range, in active use.** This part is currently a *tuning
@@ -1110,6 +1123,46 @@ The second is what makes it a *retaining* ring at all: the OD must exceed the bo
 assembly passes straight through and the part does nothing. **Measure the enlarger body and record
 it** — it is the one dimension that decides whether this design is correct, and it lives on a piece
 of inherited hardware, not in CAD.
+
+### Rev 2 — how the wedge actually engages
+
+The spacer is a **straight** Ø149.82 tube; the ring's bore is **tapered**. So contact is not over the
+full 27.40 mm — the tube enters at the ring's top and binds as the bore narrows beneath it.
+
+| Interference reached | Depth from ring top |
+|---|---|
+| 0.08 mm | 0.00 mm — contact begins immediately |
+| 0.10 mm | 0.57 mm |
+| 0.15 mm | 2.01 mm |
+| 0.20 mm | 3.44 mm |
+| 0.30 mm | 6.30 mm |
+| 0.50 mm | 12.03 mm |
+
+Full-depth engagement would demand **1.03 mm** of diametral interference — far past what PETG will
+take without splitting. **The joint therefore grips as a narrow band a few millimetres below the
+ring's top face**, and how far the tube travels in is set by how hard it is pressed.
+
+**That is the right behaviour for this part**, and it is what rev 1 lacked:
+
+- **Self-tightening.** Load pushes the tube down into a narrowing bore. The harder it is loaded, the
+  harder it grips.
+- **Tolerant of print variation.** Rev 1 needed 0.02 mm radial accuracy to work at all. Rev 2 just
+  seats at a slightly different depth if the print runs over or under — the taper converts a
+  dimensional error into a **position** error, which nothing here cares about.
+- **Still adjustable.** Press further for tighter, back off for looser — which keeps the tuning range
+  open while the optical height is being found ([D-15](#d-15-light-spacer-large)).
+
+☐ **Record the seating depth** once the optical height is locked in — it is the number that says how
+much interference the joint actually ended up with.
+
+### ⚠ The wall thins where the load is
+
+Wall runs **5.59 mm at the bottom, 5.12 mm at the top** — and the top is where the wedge grips. A
+press fit puts the bore in hoop tension, so the thinnest section carries the highest stress.
+
+☐ Watch the top face for **hoop cracking** after repeated seating cycles, particularly along a layer
+line. PETG is tough but layer adhesion is the weak axis, and a ring loaded in hoop tension is being
+pulled exactly across its layers.
 
 ### ☐ Friction fit + sustained load
 
