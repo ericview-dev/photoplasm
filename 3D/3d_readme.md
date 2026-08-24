@@ -4,6 +4,45 @@ Printable mechanical components for the Photoplasm optogenetic exposure unit.
 
 Binary STL exported from Fusion 360. Source CAD is not tracked here.
 
+> ## ⚠ PETG — every part, no exceptions
+>
+> **Print the entire device in PETG.** Not "PETG where it gets hot" — PETG throughout. Two reasons,
+> and the second is the one that is easy to miss.
+>
+> ### 1. PLA cannot survive the light or heater paths
+>
+> | | Glass transition | Against |
+> |---|---|---|
+> | **PLA** | **≈ 55–60 °C** | ⛔ **at or below the operating ceiling** |
+> | **PETG** | **≈ 80 °C** | ✅ ~25 °C of margin |
+>
+> The heater's **KSD9700 opens at 55 °C** — that is the designed fault ceiling, so chamber parts are
+> *expected* to reach it. **PLA is at its glass transition at exactly that temperature**: it softens,
+> creeps under load, and a snap or friction fit lets go. On the light side the Cree heat sink sheds
+> **~3.3 W** continuously into whatever carries it.
+>
+> Parts in these paths: **01, 06, 09, 10, 11** (heater column) and **04, 05, 13** (light/optical
+> path). But see below — do not treat that as a permission list for the others.
+>
+> ### 2. Mixed filament breaks the interference fits — this is the real argument
+>
+> This stack holds itself together by **fit**, not fasteners: part 11 snaps inside part 06's bore,
+> part 13 grips the light spacer by friction, every ring nests on a register lip, and the spacer
+> tolerances run to tenths of a millimetre.
+>
+> **Different polymers have different thermal expansion and different creep rates.** Print two mating
+> parts in different filaments and their interference stops being a constant — it drifts with
+> temperature, and the two halves relax at different rates under sustained load. A fit dialled in on
+> the bench then changes at 37 °C incubation.
+>
+> **One filament across the whole device keeps every fit predictable.** That is why the rule is *all
+> parts consistently PETG*, including the ones that never get warm.
+>
+> **Also:** PETG takes the **M2/M3 heat-set inserts** at a 230–250 °C iron, and accepts the optional
+> **UV-resin sterilisation coating** on part 01. Both are PETG-specific and neither is a
+> print-it-in-anything property.
+
+
 | ID | Part | File | Feature |
 |---|---|---|---|
 | 01 | Plate Holder | [`Plate_Holder.stl`](Plate_Holder.stl) | OPT-03 |
@@ -18,6 +57,7 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 10 | Heater Circuit Holder | [`Heater_DFR0457.stl`](Heater_DFR0457.stl) | HTR |
 | 11 | Temp Cutoff Ring | [`tempcut_combined_holder.stl`](tempcut_combined_holder.stl) | HTR |
 | 12 | Switch Box | [`switchbox.stl`](switchbox.stl) | ☐ |
+| 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring.stl`](lightspacer_lower_ring.stl) | OPT |
 
 IDs are stable labels assigned in order of addition, not assembly order.
 
@@ -56,7 +96,7 @@ Sample stage at the base of the frustum. Holds the agar plate at the focal plane
 
 | Spec | Value |
 |---|---|
-| Material | PETG required — PLA not suitable |
+| Material | PETG — as with **every** part on this device; part 01 additionally needs it for the UV-resin sterilisation coating |
 | Dish size | 90 mm or less |
 | Seating | Raised off the bottom grid |
 | Grid | Airflow passes under and around the dish for even passive heating |
@@ -371,11 +411,43 @@ and [NS-04 readme](../../spaceplacer_repo/projects/cree_led/spaceplacer_ns04_blu
 
 ---
 
+## 13 — Light Spacer Lower Ring
+
+`lightspacer_lower_ring.stl` · 159.9 × 159.9 × 27.4 mm
+
+**Retaining ring for the light spacer** — it stops the spacer slipping down into the **enlarger
+body**. Friction fit, and **adjustable**: its height on the spacer sets how deep the spacer sits.
+
+Measured from the mesh: a **plain straight ring** — two Z levels, two radii, no register lip, no
+taper, no fastener features. 828 triangles.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **159.94 mm** |
+| Inside diameter | **149.78 mm** |
+| Wall | **5.08 mm** — exactly 0.200 in |
+| Height | **27.40 mm** |
+| Fasteners | None — **friction fit** |
+| Adjustment | Ring position on the spacer sets the spacer's depth in the body |
+| Profile | Straight cylinder, no lip or register |
+
+☐ **Record the mating diameters.** The retention is entirely an interference fit, so the two numbers
+that decide whether it works are not in this file: the **light spacer's OD** (against the 149.78 mm
+bore) and the **enlarger body's opening** (which the 159.94 mm OD must not pass through). Neither is
+recorded anywhere yet.
+**PETG**, per the device-wide rule at the top — and load-bearing here, since the retention is an interference fit that a softer filament would relax out of. ☐ Print orientation not recorded.
+☐ Not placed in the stack-order table: it belongs to the light/optical path above the mask, not the
+heater column.
+
+[More details → D-13](#d-13-light-spacer-lower-ring)
+
+---
+
 ## Print settings
 
 | Setting | Value |
 |---|---|
-| Material | PETG (required for part 01) |
+| Material | **PETG — every part, no exceptions** (see the material rule at the top). PLA is not suitable anywhere on this device |
 | Layer height | 0.20 mm — 0.16 mm for part 03 |
 | Walls | 3+ |
 | Infill | 20–30% |
@@ -915,3 +987,51 @@ is an exception.
 ☐ **Leave enough lead length to reach the floor below.** The cutoff is now wired from inside the
 chamber and its leads drop through part 09's floor, so the sensor's height in the spacer sets how much
 slack the leads need. Moving the sensor up to satisfy step 36 lengthens that run.
+
+
+## D-13 Light Spacer Lower Ring
+
+`lightspacer_lower_ring.stl` — added 2026-08-24.
+
+The light spacer carries the LED light ring in the **lamphouse position** of the Bogen enlarger the
+device is built from. Without a stop it can slide down into the body; this ring is that stop.
+
+### Geometry, measured from the mesh
+
+Two Z levels (−94.07 and −66.68 in Fusion coordinates) and two radii (74.89 and 79.97 mm) — so the
+part is a **plain extruded annulus**. There is no register lip, no taper, no lead-in chamfer, and no
+fastener boss. Everything it does, it does by interference.
+
+The **5.08 mm wall is exactly 0.200 in**, which suggests the ring was dimensioned in imperial against
+the enlarger's own hardware rather than to the metric stack the printed parts otherwise use.
+
+### ☐ The two numbers that matter are not recorded
+
+Retention is a pure friction fit, so its behaviour is set entirely by clearances this file cannot
+show:
+
+| Interface | Ring dimension | Mating dimension | Status |
+|---|---|---|---|
+| Ring bore → light spacer OD | **149.78 mm** | ? | ☐ **not recorded** |
+| Ring OD → enlarger body opening | **159.94 mm** | ? | ☐ **not recorded** |
+
+The second is what makes it a *retaining* ring at all: the OD must exceed the body opening, or the
+assembly passes straight through and the part does nothing. **Measure the enlarger body and record
+it** — it is the one dimension that decides whether this design is correct, and it lives on a piece
+of inherited hardware, not in CAD.
+
+### ☐ Friction fit + sustained load
+
+The ring holds the spacer's weight continuously, through a printed interference fit. **PETG is
+mandatory here** (see the material rule at the top) — not merely preferred, because a softer filament
+would relax straight out of an interference fit under a constant load. Even in PETG, expect *some*
+creep: a joint that grips on assembly can settle over weeks, the same mechanism behind the
+pass-through and heat-set-insert cautions elsewhere in this document.
+
+Worth checking after the first extended run: does it still hold position, or has it settled? If it
+settles, the fix is a mechanical stop rather than more interference — a screw, a lip that lands on
+the body, or a split ring with a clamping screw. **Adjustability and long-term grip pull in opposite
+directions**, and right now the design is entirely on the adjustable side.
+
+☐ Record whether the adjustment is set once at assembly or re-adjusted between configurations. That
+decides whether creep is a nuisance or a calibration problem.
