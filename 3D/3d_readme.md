@@ -102,7 +102,8 @@ Sample stage at the base of the frustum. Holds the agar plate at the focal plane
 | Dish size | 90 mm or less |
 | Seating | Raised off the bottom grid |
 | Grid | Airflow passes under and around the dish for even passive heating |
-| Air passage | Extends to the base of the model — prints without supports |
+| Air passage | Extends to the base of the model — **prints without supports** (rev 2026-08-17) |
+| Volume | **64.35 cm³** — thickened to reach Z = 0; do not lighten (see [D-01](#d-01-plate-holder)) |
 | Finish | Optional UV resin coating (PETG-specific) to seal print voids for sterilization |
 
 [More details → D-01](#d-01-plate-holder)
@@ -599,13 +600,40 @@ Raising the dish off the grid opens a gap that lets air pass evenly under and ar
 
 Anything that blocks the grid apertures or closes the standoff gap defeats this — including over-thick surface coating.
 
-### Air passage revision
+### Air passage revision — 2026-08-17
 
-The air passage was extended to the base of the model so the part prints without supports. Outside dimensions are unchanged at 113.1 × 113.0 × 31.8 mm; the revision removed geometry rather than adding it.
+**The first build needed supports, and that was the problem.** Support material printed *inside the
+airflow grid* — the one place it must not be. It **clogged the airflow pattern** the grid exists to
+provide, and it was **very hard to remove**: awkward to reach, and anything missed stays as a partial
+blockage in the passage.
 
-Two secondary benefits follow. Support material in an airflow channel is the worst place to leave a fragment — removal is awkward and anything missed partially blocks the passage the grid exists to provide. And a passage open to the base has no enclosed underside to trap contaminants, which suits the sterilization requirement below and makes the resin coating easier to apply and inspect.
+**The fix was to thicken the airflow pattern so it reaches Z = 0.** With the geometry carried down to
+the build plate there is nothing to overhang, so the part prints support-free.
 
-Print this part without supports. If a slicer proposes them here, check the orientation before accepting.
+> ### ⚠ The revision ADDED material — do not "optimise" it back
+> An earlier note here said the revision *removed* geometry. **That is wrong, and the meshes prove
+> it.** Measured from the two exports (both closed and manifold, so the volumes are reliable):
+>
+> | | Aug 16 — pre-revision | **Aug 17 — current** |
+> |---|---|---|
+> | Volume | 33.27 cm³ | **64.35 cm³** |
+> | Triangles | 7,836 | **7,428** |
+> | Envelope | 113.05 × 113.00 × 31.75 mm | *unchanged* |
+>
+> **~93 % more material, in the same envelope, with fewer triangles.** The mass is not waste — it *is*
+> the fix. Thicker struts running to the plate are what removed the supports, and they gave a thicker
+> base as a bonus. Lightening this part reintroduces the overhangs, the supports, and the clogged
+> grid. The simpler tessellation is the tell: fewer overhang features to describe.
+>
+> Pre-revision geometry is recoverable at `2554f8fc` — kept for reference only, **not printable
+> without supports**.
+
+Two further benefits follow. A passage open to the base has no enclosed underside to trap
+contaminants, which suits the sterilization requirement below and makes the resin coating easier to
+apply and inspect.
+
+**Print this part without supports.** If a slicer proposes them here, the orientation is wrong — check
+it before accepting, because supports in this grid defeat the part's function, not just its finish.
 
 ### Resin sealing
 
