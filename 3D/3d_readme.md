@@ -548,6 +548,49 @@ whether these come out tight, loose, or immovable.
 
 ---
 
+## Heat-set inserts & standoffs — device standard
+
+Iron at **240 °C** for every insert on this device, M2 and M3 alike (PETG working band 230–250 °C).
+Press **square and slow** so the melt flows rather than skins — **use the guide tool, never freehand**.
+
+| | **M3** | **M2** |
+|---|---|---|
+| Source | FFVRVSS kit | ☐ measure your kit |
+| Insert OD | 4.4 mm | ~3.2 mm |
+| Insert d1 | 3.8 mm | ~2.8 mm |
+| **Receiving bore** | **Ø4.0 mm** | **Ø3.0 mm** |
+| Post OD (2 mm wall) | Ø8.0 mm | Ø7.0 mm |
+| Post height / bore depth | 8 mm / 6 mm | 8 mm / 6 mm |
+| Solid floor under bore | 2.0 mm | 2.0 mm |
+| **Bolt for a 1.5 mm board** | **M3 × 6** | **M2 × 5** |
+| Engagement | 3.0 mm = 1.0×D | 3.0 mm = 1.5×D |
+| Max bolt before bottoming | 7.5 mm | 7.5 mm |
+
+**Bore sizing rule:** sit just **above d1** so the knurl clears and enters, well **under OD** so it still
+bites. Sized to OD the insert drops in and spins; far under d1 the boss splits.
+
+⚠ **Printed bores come out undersized** — expect ~0.1–0.2 mm under nominal. Measure the first print.
+**At or above 4.2 mm (M3) / 3.4 mm (M2) the inserts will spin** — tighten in CAD, do not compensate at
+install.
+
+⚠ **A bottoming bolt pushes the insert out of the boss** instead of clamping the part. Engagement is
+capped by the insert's ~3 mm thread, not by bore depth: a longer bolt buys clearance, not grip.
+
+> ### ⚑ Perfboard mounting is M2, not M3 — learned 2026-08-26
+> **Perfboard mounting holes are M2-sized; an M3 bolt does not fit.** The M3 standard above is right
+> for *printed-part-to-printed-part* and for module mounts (parts 09, 10), but **any standoff that
+> carries a perfboard must be M2**.
+>
+> This surfaced on [part 16](#16--light-circuit-hat) after its posts were already modelled at Ø4.0.
+> **Resolved for that part by drilling the perfboard out to Ø3.4 mm (M3 free fit)** rather than
+> reprinting — the print was already under way. That is a one-off remedy, not the standard.
+>
+> **Design new circuit-carrying parts to M2 from the start.** When drilling out instead: back the board
+> with scrap wood (FR4 breaks out on exit), step up rather than jumping to final size, deburr both
+> faces, and check edge margin — a torn mounting hole near an edge is unrecoverable.
+
+---
+
 ## Print settings
 
 | Setting | Value |
