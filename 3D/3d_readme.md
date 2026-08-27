@@ -60,6 +60,7 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring_draft.stl`](lightspacer_lower_ring_draft.stl) | OPT |
 | 14 | Cree Light Ring | [`Cree_lightring.stl`](Cree_lightring.stl) | OPT-LED |
 | 15 | Light Spacer, Large | [`lightspacer_large.stl`](lightspacer_large.stl) | OPT |
+| 16 | Light Circuit Hat | [`light_circuit_hat.stl`](light_circuit_hat.stl) | OPT-CTL |
 
 IDs are stable labels assigned in order of addition, not assembly order.
 
@@ -67,6 +68,7 @@ IDs are stable labels assigned in order of addition, not assembly order.
 
 | File | What it is | Status |
 |---|---|---|
+| `lightspacer_lower_ring.3mf` | Bambu Studio project for **part 13** | ✅ Keep — a print-ready source artefact, which part 11 conspicuously lacks |
 | `thermalcut_sensorholder.3mf` | Bambu Studio project for the **superseded** two-file part 11 workflow | ☐ **Review** — D-11 previously recorded this as deleted; it is still here. It is scaffolding for the merge-at-slice-time method that `tempcut_combined_holder.stl` replaced, so it is probably a delete — but it is also the only remaining artefact carrying part 11's pre-merge geometry (see the source-CAD warning in [D-11](#d-11-temp-cutoff-ring)) |
 
 ## Stack order
@@ -545,6 +547,63 @@ down, which both centres it on the optical axis and grips it without a fastener.
 whether these come out tight, loose, or immovable.
 
 [More details → D-15](#d-15-light-spacer-large)
+
+---
+
+## 16 — Light Circuit Hat
+
+`light_circuit_hat.stl` · 149.2 × 149.2 × 42.1 mm
+
+**Closed cap over the Cree light ring**, carrying the **NS-04 perfboard** that replaces the
+breadboarded blue-rail CTRL circuit. Drops into part 14's bore as a spigot.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **Ø149.23 mm** — into [part 14](#14--cree-light-ring)'s Ø149.22 bore |
+| Seats on | part 14's web plate at **Z 13.00** |
+| Height | **42.10 mm** (Z 13.02 → 55.12) |
+| Clears | part 14's **10.66 mm** protrusion, out to Ø112.45 |
+| **Wire porthole** | **Ø12.00 mm**, central — 4 wires + future wire-lock |
+| **Standoffs** | 4 × **10 mm tall**, **Ø4.00 mm bore**, Ø10 → Ø13.52 flared |
+| **Post pattern** | **35.00 × 55.00 mm**, centre offset **−33.20 mm in X** |
+| Top plate | 4 mm (Z 51.12 → 55.12) |
+
+### ⚠ ☐ The four standoff bores break through the top face
+
+Verified from the mesh: the Ø4.0 bores span the full 10 mm, **Z 45.12 → 55.12**, and top-face material
+starts at r = 2.00 mm around each post. **They are open.**
+
+**That is four light leaks in the cap of a 470 nm lamphouse, pointing up at the operator.** The
+[standoff standard](#heat-set-inserts--standoffs--device-standard) calls for a **6 mm blind bore with
+2 mm of solid floor** — partly to avoid exactly this.
+
+☐ **Shorten the bores to 6 mm**, leaving the 4 mm top plate solid — or plug them.
+⚠ With a through-bore there is also **no bottoming limit**: a long bolt simply exits the top, so the
+bolt-length table stops protecting the insert.
+
+### ⚑ Perfboard mounting is M2 — resolved by drilling, once
+
+The posts were modelled at **Ø4.0 for M3** before the perfboard was offered up. **Perfboard mounting
+holes are M2-sized and an M3 bolt does not fit.**
+
+**Resolved for this part by drilling the perfboard to Ø3.4 mm (M3 free fit)** rather than reprinting,
+since the print was already under way. ⚠ **That is a one-off remedy, not the standard** — design new
+perfboard-carrying parts to **M2 (bore Ø3.0, post Ø7.0, M2 × 5)** from the first sketch.
+
+☐ Confirm the 35.00 × 55.00 pattern matches the board's actual holes, and that the **33.20 mm
+off-axis offset** is deliberate (it keeps the board clear of the central porthole).
+
+### ☐ Planned — wire-management cap
+
+Two snapping halves with a fitted cable sleeve, acting as a passthrough tension manager on the Ø12
+porthole. **Needed, not cosmetic:** the NS-04 build uses **male Dupont pins soldered directly into the
+perfboard**, which have **no strain relief** — the solder joint itself takes any cable pull.
+
+### Venting — deliberately not here
+
+Vents belong in [part 15](#15--light-spacer-large), the 92 mm tall volume directly enclosing the
+emitter and heat sink where heat actually accumulates. The hat sits above it and mostly sees what
+rises. Decided 2026-08-26.
 
 ---
 
