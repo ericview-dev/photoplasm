@@ -4,6 +4,45 @@ Printable mechanical components for the Photoplasm optogenetic exposure unit.
 
 Binary STL exported from Fusion 360. Source CAD is not tracked here.
 
+> ## ⚠ PETG — every part, no exceptions
+>
+> **Print the entire device in PETG.** Not "PETG where it gets hot" — PETG throughout. Two reasons,
+> and the second is the one that is easy to miss.
+>
+> ### 1. PLA cannot survive the light or heater paths
+>
+> | | Glass transition | Against |
+> |---|---|---|
+> | **PLA** | **≈ 55–60 °C** | ⛔ **at or below the operating ceiling** |
+> | **PETG** | **≈ 80 °C** | ✅ ~25 °C of margin |
+>
+> The heater's **KSD9700 opens at 55 °C** — that is the designed fault ceiling, so chamber parts are
+> *expected* to reach it. **PLA is at its glass transition at exactly that temperature**: it softens,
+> creeps under load, and a snap or friction fit lets go. On the light side the Cree heat sink sheds
+> **~3.3 W** continuously into whatever carries it.
+>
+> Parts in these paths: **01, 06, 09, 10, 11** (heater column) and **04, 05, 13** (light/optical
+> path). But see below — do not treat that as a permission list for the others.
+>
+> ### 2. Mixed filament breaks the interference fits — this is the real argument
+>
+> This stack holds itself together by **fit**, not fasteners: part 11 snaps inside part 06's bore,
+> part 13 grips the light spacer by friction, every ring nests on a register lip, and the spacer
+> tolerances run to tenths of a millimetre.
+>
+> **Different polymers have different thermal expansion and different creep rates.** Print two mating
+> parts in different filaments and their interference stops being a constant — it drifts with
+> temperature, and the two halves relax at different rates under sustained load. A fit dialled in on
+> the bench then changes at 37 °C incubation.
+>
+> **One filament across the whole device keeps every fit predictable.** That is why the rule is *all
+> parts consistently PETG*, including the ones that never get warm.
+>
+> **Also:** PETG takes the **M2/M3 heat-set inserts** at a 230–250 °C iron, and accepts the optional
+> **UV-resin sterilisation coating** on part 01. Both are PETG-specific and neither is a
+> print-it-in-anything property.
+
+
 | ID | Part | File | Feature |
 |---|---|---|---|
 | 01 | Plate Holder | [`Plate_Holder.stl`](Plate_Holder.stl) | OPT-03 |
@@ -18,8 +57,19 @@ Binary STL exported from Fusion 360. Source CAD is not tracked here.
 | 10 | Heater Circuit Holder | [`Heater_DFR0457.stl`](Heater_DFR0457.stl) | HTR |
 | 11 | Temp Cutoff Ring | [`tempcut_combined_holder.stl`](tempcut_combined_holder.stl) | HTR |
 | 12 | Switch Box | [`switchbox.stl`](switchbox.stl) | ☐ |
+| 13 | Light Spacer Lower Ring | [`lightspacer_lower_ring_draft.stl`](lightspacer_lower_ring_draft.stl) | OPT |
+| 14 | Cree Light Ring | [`Cree_lightring.stl`](Cree_lightring.stl) | OPT-LED |
+| 15 | Light Spacer, Large | [`lightspacer_large.stl`](lightspacer_large.stl) | OPT |
+| 16 | Light Circuit Hat | [`light_circuit_hat.stl`](light_circuit_hat.stl) | OPT-CTL |
 
 IDs are stable labels assigned in order of addition, not assembly order.
+
+### Also in this folder, not a numbered part
+
+| File | What it is | Status |
+|---|---|---|
+| `lightspacer_lower_ring.3mf` | Bambu Studio project for **part 13** | ✅ Keep — a print-ready source artefact, which part 11 conspicuously lacks |
+| `thermalcut_sensorholder.3mf` | Bambu Studio project for the **superseded** two-file part 11 workflow | ☐ **Review** — D-11 previously recorded this as deleted; it is still here. It is scaffolding for the merge-at-slice-time method that `tempcut_combined_holder.stl` replaced, so it is probably a delete — but it is also the only remaining artefact carrying part 11's pre-merge geometry (see the source-CAD warning in [D-11](#d-11-temp-cutoff-ring)) |
 
 ## Stack order
 
@@ -50,11 +100,12 @@ Sample stage at the base of the frustum. Holds the agar plate at the focal plane
 
 | Spec | Value |
 |---|---|
-| Material | PETG required — PLA not suitable |
+| Material | PETG — as with **every** part on this device; part 01 additionally needs it for the UV-resin sterilisation coating |
 | Dish size | 90 mm or less |
 | Seating | Raised off the bottom grid |
 | Grid | Airflow passes under and around the dish for even passive heating |
-| Air passage | Extends to the base of the model — prints without supports |
+| Air passage | Extends to the base of the model — **prints without supports** (rev 2026-08-17) |
+| Volume | **64.35 cm³** — thickened to reach Z = 0; do not lighten (see [D-01](#d-01-plate-holder)) |
 | Finish | Optional UV resin coating (PETG-specific) to seal print voids for sterilization |
 
 [More details → D-01](#d-01-plate-holder)
@@ -305,8 +356,11 @@ layer of its own. 105.0 mm OD against the spacer's 105.1 mm ID.
 
 > ✅ **Revised 2026-08-21 — now a single file.** `tempcut_combined_holder.stl` is the ring and the
 > sensor pocket merged into one printable mesh, replacing the old load-two-files-and-merge-in-the-slicer
-> workflow. **The composite caveat is retired.** Superseded: `tempcut_ring.stl` + `tempcut.stl`
-> (kept as source, superseded).
+> workflow. **The composite caveat is retired.**
+>
+> 🗑 **Superseded halves deleted 2026-08-24** — `tempcut_ring.stl`, `tempcut.stl` and
+> `tempcut_ring.step` are gone from the folder. They were reference only; the merged mesh is the
+> single printable. ⚠ See D-11: this leaves part 11 with **no source geometry of any kind**.
 
 | Spec | Value |
 |---|---|
@@ -315,7 +369,7 @@ layer of its own. 105.0 mm OD against the spacer's 105.1 mm ID.
 | Retains | KSD9700 thermal cutoff, body ~20 × 7.75 × 3.6 mm |
 | Fasteners | None — snap fit |
 | Assembly | **Single mesh** — merged in CAD, not at slice time |
-| Source | `tempcut_ring.stl` + `tempcut.stl` — **superseded, kept for reference only** |
+| Source | ⚠ **None** — the superseded halves were deleted 2026-08-24 and no STEP/F3D of the merged part exists (D-11) |
 
 ☐ **Superseded by design intent** — see D-11. A simplified spacer that holds the sensor *and* routes
 its leads is planned, which would absorb this part and part 06 into one.
@@ -362,11 +416,245 @@ and [NS-04 readme](../../spaceplacer_repo/projects/cree_led/spaceplacer_ns04_blu
 
 ---
 
+## 13 — Light Spacer Lower Ring
+
+`lightspacer_lower_ring_draft.stl` · 159.9 × 159.9 × 27.4 mm — **rev 2, drafted bore**
+
+**Retaining ring for the light spacer** — it stops the spacer slipping down into the **enlarger
+body**. **Press fit**, and **adjustable**: its height on the spacer sets how deep the spacer sits.
+
+> ### 🔁 Rev 2 — 2026-08-24: drafted bore, because rev 1 slipped
+> **Rev 1's straight Ø149.78 bore did not hold.** Against the spacer's Ø149.82 that was +0.04 mm
+> diametral — 0.02 mm on radius, finer than FDM repeatability — so the fit landed wherever the print
+> happened to land, and in practice it landed loose.
+>
+> **Rev 2 tapers the bore at a 1.00° half-angle** — Ø149.74 at the top, narrowing to **Ø148.79** at
+> the bottom. Outside diameter is unchanged at Ø159.97, and the envelope is identical, so it drops
+> straight into the same place.
+>
+> **The taper narrows downward, which is the load direction.** The spacer's weight pushes it *down*
+> through the ring — into the narrowing bore — so the joint **self-tightens under exactly the load it
+> exists to resist**. Rev 1 had no such behaviour: a straight bore that slips once slips further.
+
+Measured from the mesh: 826 triangles, two Z levels, constant Ø159.97 OD, tapered bore.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **159.97 mm**, constant |
+| Bore — top | **Ø149.74 mm** |
+| Bore — bottom | **Ø148.79 mm** |
+| Bore draft | **1.00° half-angle**, narrowing downward |
+| Wall | 5.12 mm (top) → 5.59 mm (bottom) |
+| Height | **27.40 mm** |
+| Fasteners | None — **press fit**, self-tightening under load |
+| Adjustment | Ring position on the spacer sets the spacer's depth in the body |
+
+✅ **Spacer OD resolved 2026-08-24** — it mates with [part 15](#15--light-spacer-large), whose lower
+section is **Ø149.82 mm** straight. Against rev 2's tapered bore that is **+0.08 mm interference at the
+ring's top, rising to +1.03 mm at its bottom** — a wedge, not a constant fit. The ring slides along **76.19 mm** of straight spacer, giving **48.79 mm** of
+adjustable travel once its own 27.40 mm height is accounted for.
+
+⏸ **That travel is the optical tuning range, in active use.** This part is currently a *tuning
+fixture*: the emitter height is being set empirically for best projection convergence, and only then
+will it be recorded and locked in — see [D-15](#d-15-light-spacer-large). Expect this ring to be
+revised or replaced at lock-in; the fit that adjusts well is not the fit that holds permanently.
+
+☐ **The enlarger body's opening is still unrecorded** — the 159.94 mm OD must not pass through it, or
+the assembly drops and the part does nothing. That dimension lives on inherited hardware, not CAD.
+**PETG**, per the device-wide rule at the top — and load-bearing here, since the retention is an interference fit that a softer filament would relax out of. ☐ Print orientation not recorded.
+☐ Not placed in the stack-order table: it belongs to the light/optical path above the mask, not the
+heater column.
+
+[More details → D-13](#d-13-light-spacer-lower-ring)
+
+---
+
+## 14 — Cree Light Ring
+
+`Cree_lightring.stl` · 174.6 × 174.6 × 42.9 mm
+
+**Carrier for the Cree XP-E2 470 nm emitter array** — the lamphouse replacement that seats the light
+source above the condenser. Largest part on the device.
+
+Measured from the mesh: an outer **skirt** with a **web plate** across it, a central **hub**, and a
+raised **ring** on top. 1,956 triangles, 6 distinct Z levels.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **174.62 mm** |
+| Skirt bore | **149.22 mm** |
+| Skirt wall | **12.70 mm** — exactly 0.500 in |
+| Skirt height | 32.20 mm (Z −12.70 → +19.50) |
+| Web plate | **3.20 mm** thick (Z +9.80 → +13.00), spanning to the skirt bore |
+| Central bore | **Ø9.97 mm** |
+| Central hub | **Ø37.77 mm**, rising to Z +19.60 |
+| Upper ring | Ø75.80 – Ø112.46 at Z +30.20 |
+| Edge notches | 2 × ~1.76 × 3.59 mm at the plate rim, mirrored about X — ☐ purpose not recorded (cable exit? keying?) |
+
+> ### ✅ RESOLVED 2026-08-24 — it mates with part 15
+> The inferred Ø≈149 tube is real: it is [part 15](#15--light-spacer-large), added the same day. The
+> skirt bore of **149.22 mm** seats on the spacer's **tapered top OD**, which passes through 149.26 mm
+> at its narrowest. Both this joint and part 13's are cut to the **same +0.04 mm interference** — see
+> [D-15](#d-15-light-spacer-large) for the full mating table. Nothing was wrong; the two close bores
+> were two different stations on one tube.
+
+Both this part and part 13 are walled in **exact imperial** (0.500 in and 0.200 in) while the rest of
+the printed stack is metric — consistent with both being dimensioned against the inherited **Bogen
+enlarger** hardware rather than the printed column.
+
+☐ **Emitter mounting not recorded.** No mounting-hole pattern for the Cree stars, the heat sink, or
+the fan was resolvable from the mesh at this level. Record how the array, sink and Carclo optics
+attach, and to which surface.
+☐ **Thermal path not recorded.** The Cree sink sheds **~3.3 W** into whatever carries it — see the
+material rule; this part is squarely in the light path and must be PETG.
+
+[More details → D-14](#d-14-cree-light-ring)
+
+---
+
+## 15 — Light Spacer, Large
+
+`lightspacer_large.stl` · 149.7 × 149.8 × 92.1 mm
+
+**The column that raises the Cree light ring to optical height** — setting the throw for projection
+convergence. ⏸ **That height is deliberately tunable and not yet locked in:** the optimum is being
+found empirically, then recorded, and the parts revised to suit. A plain tube with a **stepped/tapered outer diameter**, and it is the part that ties the
+whole upper assembly together: [part 14](#14--cree-light-ring) wedges onto its top,
+[part 13](#13--light-spacer-lower-ring) grips its lower section and stops it dropping into the
+enlarger body.
+
+| Spec | Value |
+|---|---|
+| Height | **92.07 mm** — ⏸ **provisional, tunable by design** (see [D-15](#d-15-light-spacer-large)) |
+| Bore (clear aperture) | **Ø142.84 mm**, constant full height |
+| Wall | **3.49 mm** |
+| OD — lower, straight | **Ø149.82 mm** over **76.19 mm** |
+| OD — upper, tapered | **Ø149.82 → Ø149.26** over the top **15.88 mm** (≈**1.0° half-angle**) |
+
+### The fits — both cut to +0.04 mm
+
+| Joint | Bore | Spacer OD | Interference |
+|---|---|---|---|
+| **14** Cree light ring → spacer top | Ø149.22 | Ø149.26 | **+0.04 mm** |
+| **13** lower ring → spacer bottom | Ø149.78 | Ø149.82 | **+0.04 mm** |
+
+Two joints, two stations on one tube, **the same interference at each**. The shallow top taper is a
+**self-locking wedge**: the light ring starts easily at the narrow top and tightens as it is pushed
+down, which both centres it on the optical axis and grips it without a fastener.
+
+⚠ **+0.04 mm diametral is 0.02 mm radial — finer than FDM repeatability.** See
+[D-15](#d-15-light-spacer-large): in practice your printer's calibration, not the model, decides
+whether these come out tight, loose, or immovable.
+
+[More details → D-15](#d-15-light-spacer-large)
+
+---
+
+## 16 — Light Circuit Hat
+
+`light_circuit_hat.stl` · 149.2 × 149.2 × 42.1 mm
+
+**Closed cap over the Cree light ring**, carrying the **NS-04 perfboard** that replaces the
+breadboarded blue-rail CTRL circuit. Drops into part 14's bore as a spigot.
+
+| Spec | Value |
+|---|---|
+| Outside diameter | **Ø149.23 mm** — into [part 14](#14--cree-light-ring)'s Ø149.22 bore |
+| Seats on | part 14's web plate at **Z 13.00** |
+| Height | **42.10 mm** (Z 13.02 → 55.12) |
+| Clears | part 14's **10.66 mm** protrusion, out to Ø112.45 |
+| **Wire porthole** | **Ø12.00 mm**, central — 4 wires + future wire-lock |
+| **Standoffs** | 4 × **10 mm tall**, **Ø4.00 mm bore**, Ø10 → Ø13.52 flared |
+| **Post pattern** | **35.00 × 55.00 mm**, centre offset **−33.20 mm in X** |
+| Top plate | 4 mm (Z 51.12 → 55.12) |
+
+### ⚠ ☐ The four standoff bores break through the top face
+
+Verified from the mesh: the Ø4.0 bores span the full 10 mm, **Z 45.12 → 55.12**, and top-face material
+starts at r = 2.00 mm around each post. **They are open.**
+
+**That is four light leaks in the cap of a 470 nm lamphouse, pointing up at the operator.** The
+[standoff standard](#heat-set-inserts--standoffs--device-standard) calls for a **6 mm blind bore with
+2 mm of solid floor** — partly to avoid exactly this.
+
+☐ **Shorten the bores to 6 mm**, leaving the 4 mm top plate solid — or plug them.
+⚠ With a through-bore there is also **no bottoming limit**: a long bolt simply exits the top, so the
+bolt-length table stops protecting the insert.
+
+### ⚑ Perfboard mounting is M2 — resolved by drilling, once
+
+The posts were modelled at **Ø4.0 for M3** before the perfboard was offered up. **Perfboard mounting
+holes are M2-sized and an M3 bolt does not fit.**
+
+**Resolved for this part by drilling the perfboard to Ø3.4 mm (M3 free fit)** rather than reprinting,
+since the print was already under way. ⚠ **That is a one-off remedy, not the standard** — design new
+perfboard-carrying parts to **M2 (bore Ø3.0, post Ø7.0, M2 × 5)** from the first sketch.
+
+☐ Confirm the 35.00 × 55.00 pattern matches the board's actual holes, and that the **33.20 mm
+off-axis offset** is deliberate (it keeps the board clear of the central porthole).
+
+### ☐ Planned — wire-management cap
+
+Two snapping halves with a fitted cable sleeve, acting as a passthrough tension manager on the Ø12
+porthole. **Needed, not cosmetic:** the NS-04 build uses **male Dupont pins soldered directly into the
+perfboard**, which have **no strain relief** — the solder joint itself takes any cable pull.
+
+### Venting — deliberately not here
+
+Vents belong in [part 15](#15--light-spacer-large), the 92 mm tall volume directly enclosing the
+emitter and heat sink where heat actually accumulates. The hat sits above it and mostly sees what
+rises. Decided 2026-08-26.
+
+---
+
+## Heat-set inserts & standoffs — device standard
+
+Iron at **240 °C** for every insert on this device, M2 and M3 alike (PETG working band 230–250 °C).
+Press **square and slow** so the melt flows rather than skins — **use the guide tool, never freehand**.
+
+| | **M3** | **M2** |
+|---|---|---|
+| Source | FFVRVSS kit | ☐ measure your kit |
+| Insert OD | 4.4 mm | ~3.2 mm |
+| Insert d1 | 3.8 mm | ~2.8 mm |
+| **Receiving bore** | **Ø4.0 mm** | **Ø3.0 mm** |
+| Post OD (2 mm wall) | Ø8.0 mm | Ø7.0 mm |
+| Post height / bore depth | 8 mm / 6 mm | 8 mm / 6 mm |
+| Solid floor under bore | 2.0 mm | 2.0 mm |
+| **Bolt for a 1.5 mm board** | **M3 × 6** | **M2 × 5** |
+| Engagement | 3.0 mm = 1.0×D | 3.0 mm = 1.5×D |
+| Max bolt before bottoming | 7.5 mm | 7.5 mm |
+
+**Bore sizing rule:** sit just **above d1** so the knurl clears and enters, well **under OD** so it still
+bites. Sized to OD the insert drops in and spins; far under d1 the boss splits.
+
+⚠ **Printed bores come out undersized** — expect ~0.1–0.2 mm under nominal. Measure the first print.
+**At or above 4.2 mm (M3) / 3.4 mm (M2) the inserts will spin** — tighten in CAD, do not compensate at
+install.
+
+⚠ **A bottoming bolt pushes the insert out of the boss** instead of clamping the part. Engagement is
+capped by the insert's ~3 mm thread, not by bore depth: a longer bolt buys clearance, not grip.
+
+> ### ⚑ Perfboard mounting is M2, not M3 — learned 2026-08-26
+> **Perfboard mounting holes are M2-sized; an M3 bolt does not fit.** The M3 standard above is right
+> for *printed-part-to-printed-part* and for module mounts (parts 09, 10), but **any standoff that
+> carries a perfboard must be M2**.
+>
+> This surfaced on [part 16](#16--light-circuit-hat) after its posts were already modelled at Ø4.0.
+> **Resolved for that part by drilling the perfboard out to Ø3.4 mm (M3 free fit)** rather than
+> reprinting — the print was already under way. That is a one-off remedy, not the standard.
+>
+> **Design new circuit-carrying parts to M2 from the start.** When drilling out instead: back the board
+> with scrap wood (FR4 breaks out on exit), step up rather than jumping to final size, deburr both
+> faces, and check edge margin — a torn mounting hole near an edge is unrecoverable.
+
+---
+
 ## Print settings
 
 | Setting | Value |
 |---|---|
-| Material | PETG (required for part 01) |
+| Material | **PETG — every part, no exceptions** (see the material rule at the top). PLA is not suitable anywhere on this device |
 | Layer height | 0.20 mm — 0.16 mm for part 03 |
 | Walls | 3+ |
 | Infill | 20–30% |
@@ -414,13 +702,40 @@ Raising the dish off the grid opens a gap that lets air pass evenly under and ar
 
 Anything that blocks the grid apertures or closes the standoff gap defeats this — including over-thick surface coating.
 
-### Air passage revision
+### Air passage revision — 2026-08-17
 
-The air passage was extended to the base of the model so the part prints without supports. Outside dimensions are unchanged at 113.1 × 113.0 × 31.8 mm; the revision removed geometry rather than adding it.
+**The first build needed supports, and that was the problem.** Support material printed *inside the
+airflow grid* — the one place it must not be. It **clogged the airflow pattern** the grid exists to
+provide, and it was **very hard to remove**: awkward to reach, and anything missed stays as a partial
+blockage in the passage.
 
-Two secondary benefits follow. Support material in an airflow channel is the worst place to leave a fragment — removal is awkward and anything missed partially blocks the passage the grid exists to provide. And a passage open to the base has no enclosed underside to trap contaminants, which suits the sterilization requirement below and makes the resin coating easier to apply and inspect.
+**The fix was to thicken the airflow pattern so it reaches Z = 0.** With the geometry carried down to
+the build plate there is nothing to overhang, so the part prints support-free.
 
-Print this part without supports. If a slicer proposes them here, check the orientation before accepting.
+> ### ⚠ The revision ADDED material — do not "optimise" it back
+> An earlier note here said the revision *removed* geometry. **That is wrong, and the meshes prove
+> it.** Measured from the two exports (both closed and manifold, so the volumes are reliable):
+>
+> | | Aug 16 — pre-revision | **Aug 17 — current** |
+> |---|---|---|
+> | Volume | 33.27 cm³ | **64.35 cm³** |
+> | Triangles | 7,836 | **7,428** |
+> | Envelope | 113.05 × 113.00 × 31.75 mm | *unchanged* |
+>
+> **~93 % more material, in the same envelope, with fewer triangles.** The mass is not waste — it *is*
+> the fix. Thicker struts running to the plate are what removed the supports, and they gave a thicker
+> base as a bonus. Lightening this part reintroduces the overhangs, the supports, and the clogged
+> grid. The simpler tessellation is the tell: fewer overhang features to describe.
+>
+> Pre-revision geometry is recoverable at `2554f8fc` — kept for reference only, **not printable
+> without supports**.
+
+Two further benefits follow. A passage open to the base has no enclosed underside to trap
+contaminants, which suits the sterilization requirement below and makes the resin coating easier to
+apply and inspect.
+
+**Print this part without supports.** If a slicer proposes them here, the orientation is wrong — check
+it before accepting, because supports in this grid defeat the part's function, not just its finish.
 
 ### Resin sealing
 
@@ -824,19 +1139,31 @@ the sensor pocket in one file. Slice that one file and you get the whole part.
 Previously the two halves were joined **in Bambu Studio at slice time**, so `tempcut_ring.stl` alone
 yielded a plain ring with no sensor retention. That trap is gone.
 
-**Folder cleaned 2026-08-21.** The 8 `(Assembly)_BodyN` exports and the Bambu project
-`thermalcut_sensorholder.3mf` have been removed now that the merged mesh exists. That is the right
-call — they were the scaffolding for a workflow the combined file replaces.
+**Folder cleaned 2026-08-21.** The 8 `(Assembly)_BodyN` exports were removed once the merged mesh
+existed — they were scaffolding for a workflow the combined file replaces.
 
-Still present as reference, **not printables**: `tempcut_ring.stl` and `tempcut.stl`. Their exports
-are not co-located (the ring sits at z −1131 while the pocket sits at z 0), so do not read those
-coordinates as stack positions.
+**Superseded halves deleted 2026-08-24.** `tempcut_ring.stl`, `tempcut.stl` and `tempcut_ring.step`
+are no longer in the folder. They were reference only — never printables — and their exports were not
+co-located anyway (the ring sat at z −1131, the pocket at z 0), so they were a standing trap for
+anyone reading those coordinates as stack positions. Nothing printable was lost.
 
-☐ **Source CAD for part 11 is now thin.** `tempcut_ring.f3d` was deleted, and the removed 3MF
-referenced a `tempcut_ring_parts.step` that was never in this folder. What remains is
-`tempcut_ring.step` — which is the *ring alone*, not the merged geometry. **There is no source file
-for `tempcut_combined_holder.stl`.** If the merge has to be revised, it starts from an STL. Re-export
-a STEP or F3D of the combined part.
+> ### ⚠ ☐ Part 11 now has NO source geometry — the merged STL is the only artefact
+> This was already thin and the 2026-08-24 cleanup closed the last door. `tempcut_ring.f3d` was
+> deleted earlier; the removed 3MF referenced a `tempcut_ring_parts.step` that was never in this
+> folder; and `tempcut_ring.step` — the *ring alone*, not the merged geometry — has now gone too.
+>
+> **`tempcut_combined_holder.stl` is the whole of part 11's existence.** A revision to the merge
+> starts from a mesh, not from CAD.
+>
+> **One hedge remains:** `thermalcut_sensorholder.3mf` is still in the folder (D-11 previously
+> recorded it as deleted — it was not). As the Bambu project for the pre-merge workflow it carries the
+> two halves' geometry, so it is the last thing standing between part 11 and mesh-only. **Do not
+> delete it until a STEP or F3D of the combined part exists.**
+>
+> **Do this if the Fusion 360 design still exists in the cloud: re-export a STEP or F3D of the
+> combined part.** If it does not, part 11 is mesh-only permanently — which matters because D-11
+> already flags it as *superseded by design intent* (a simplified spacer absorbing parts 06 and 11),
+> and that redesign would have to be modelled from scratch regardless.
 
 ### ✅ RESOLVED 2026-08-18 — the leads have an exit
 
@@ -894,3 +1221,231 @@ is an exception.
 ☐ **Leave enough lead length to reach the floor below.** The cutoff is now wired from inside the
 chamber and its leads drop through part 09's floor, so the sensor's height in the spacer sets how much
 slack the leads need. Moving the sensor up to satisfy step 36 lengthens that run.
+
+
+## D-13 Light Spacer Lower Ring
+
+`lightspacer_lower_ring.stl` — added 2026-08-24.
+
+The light spacer carries the LED light ring in the **lamphouse position** of the Bogen enlarger the
+device is built from. Without a stop it can slide down into the body; this ring is that stop.
+
+### Geometry, measured from the mesh
+
+Two Z levels (−94.07 and −66.68 in Fusion coordinates) and two radii (74.89 and 79.97 mm) — so the
+part is a **plain extruded annulus**. There is no register lip, no taper, no lead-in chamfer, and no
+fastener boss. Everything it does, it does by interference.
+
+The **5.08 mm wall is exactly 0.200 in**, which suggests the ring was dimensioned in imperial against
+the enlarger's own hardware rather than to the metric stack the printed parts otherwise use.
+
+### ☐ The two numbers that matter are not recorded
+
+Retention is a pure friction fit, so its behaviour is set entirely by clearances this file cannot
+show:
+
+| Interface | Ring dimension | Mating dimension | Status |
+|---|---|---|---|
+| Ring bore → light spacer OD | **149.78 mm** | ? | ☐ **not recorded** |
+| Ring OD → enlarger body opening | **159.94 mm** | ? | ☐ **not recorded** |
+
+The second is what makes it a *retaining* ring at all: the OD must exceed the body opening, or the
+assembly passes straight through and the part does nothing. **Measure the enlarger body and record
+it** — it is the one dimension that decides whether this design is correct, and it lives on a piece
+of inherited hardware, not in CAD.
+
+### Rev 2 — how the wedge actually engages
+
+The spacer is a **straight** Ø149.82 tube; the ring's bore is **tapered**. So contact is not over the
+full 27.40 mm — the tube enters at the ring's top and binds as the bore narrows beneath it.
+
+| Interference reached | Depth from ring top |
+|---|---|
+| 0.08 mm | 0.00 mm — contact begins immediately |
+| 0.10 mm | 0.57 mm |
+| 0.15 mm | 2.01 mm |
+| 0.20 mm | 3.44 mm |
+| 0.30 mm | 6.30 mm |
+| 0.50 mm | 12.03 mm |
+
+Full-depth engagement would demand **1.03 mm** of diametral interference — far past what PETG will
+take without splitting. **The joint therefore grips as a narrow band a few millimetres below the
+ring's top face**, and how far the tube travels in is set by how hard it is pressed.
+
+**That is the right behaviour for this part**, and it is what rev 1 lacked:
+
+- **Self-tightening.** Load pushes the tube down into a narrowing bore. The harder it is loaded, the
+  harder it grips.
+- **Tolerant of print variation.** Rev 1 needed 0.02 mm radial accuracy to work at all. Rev 2 just
+  seats at a slightly different depth if the print runs over or under — the taper converts a
+  dimensional error into a **position** error, which nothing here cares about.
+- **Still adjustable.** Press further for tighter, back off for looser — which keeps the tuning range
+  open while the optical height is being found ([D-15](#d-15-light-spacer-large)).
+
+☐ **Record the seating depth** once the optical height is locked in — it is the number that says how
+much interference the joint actually ended up with.
+
+### ⚠ The wall thins where the load is
+
+Wall runs **5.59 mm at the bottom, 5.12 mm at the top** — and the top is where the wedge grips. A
+press fit puts the bore in hoop tension, so the thinnest section carries the highest stress.
+
+☐ Watch the top face for **hoop cracking** after repeated seating cycles, particularly along a layer
+line. PETG is tough but layer adhesion is the weak axis, and a ring loaded in hoop tension is being
+pulled exactly across its layers.
+
+### ☐ Friction fit + sustained load
+
+The ring holds the spacer's weight continuously, through a printed interference fit. **PETG is
+mandatory here** (see the material rule at the top) — not merely preferred, because a softer filament
+would relax straight out of an interference fit under a constant load. Even in PETG, expect *some*
+creep: a joint that grips on assembly can settle over weeks, the same mechanism behind the
+pass-through and heat-set-insert cautions elsewhere in this document.
+
+Worth checking after the first extended run: does it still hold position, or has it settled? If it
+settles, the fix is a mechanical stop rather than more interference — a screw, a lip that lands on
+the body, or a split ring with a clamping screw. **Adjustability and long-term grip pull in opposite
+directions**, and right now the design is entirely on the adjustable side.
+
+☐ Record whether the adjustment is set once at assembly or re-adjusted between configurations. That
+decides whether creep is a nuisance or a calibration problem.
+
+
+## D-14 Cree Light Ring
+
+`Cree_lightring.stl` — added 2026-08-24. **174.62 × 174.57 × 42.86 mm**, 1,956 triangles.
+
+Replaces the Bogen enlarger's original lamphouse. The Cree XP-E2 470 nm array and its Carclo
+diffuser optics sit here, above the condenser that collimates their output onto the mask.
+
+### Geometry, measured from the mesh
+
+Six distinct Z levels, all concentric on the axis (XY centre 0.00, 0.00):
+
+| Z | r_min | r_max | Reading |
+|---|---|---|---|
+| −12.70 | 74.61 | 87.31 | skirt, bottom face |
+| +9.80 | 5.00 | 74.61 | web plate, underside |
+| +13.00 | 5.00 | 74.61 | web plate, top — **3.20 mm thick** |
+| +19.50 | 74.61 | 87.31 | skirt, top face |
+| +19.60 | 5.00 | 18.90 | central hub |
+| +30.20 | 37.90 | 56.23 | upper ring |
+
+The skirt runs the full height (−12.70 → +19.50) while the web plate sits high within it, so the part
+has a **deep open underside** — about 22 mm of clear skirt below the plate. That volume is presumably
+where the emitter, sink and optics live, firing downward.
+
+### ☐ What the mesh cannot tell us
+
+Three things are needed before this part can be built or reconciled, and none are derivable from an
+STL:
+
+1. **Emitter mounting.** No resolvable hole pattern for the Cree stars, the heat sink, or the cooling
+   fan. Record the pattern, fastener spec, and which surface each attaches to.
+2. **The Ø≈149 mm light spacer.** See the mating question in the part 14 summary — the tube that both
+   this and part 13 appear to be sized around is not in this folder at all. **It is the one component
+   that would confirm or break both designs, and it is undocumented.**
+3. **The two edge notches** (~1.76 × 3.59 mm, mirrored about X at r ≈ 74.6). Cable exit is the obvious
+   guess — the emitter needs power in — but that is a guess.
+
+### ⚠ Thermal — PETG is load-bearing here
+
+The Cree sink sheds **~3.3 W** continuously, and this part carries it. The device-wide
+[PETG rule](#) applies with force: PLA's ~55–60 °C glass transition is a real risk against a
+continuously-dissipating sink in a semi-enclosed skirt, where convection is poor by design (the
+lamphouse is meant to be light-tight, not ventilated).
+
+☐ Record the measured temperature at the sink-to-PETG interface during a sustained run. The device
+guidance is to keep that interface **well below ~80 °C**; unlike the heater chamber, nothing here has
+a thermal cutoff to bound it.
+
+
+## D-15 Light Spacer, Large
+
+`lightspacer_large.stl` — added 2026-08-24. **149.74 × 149.76 × 92.07 mm**, 1,002 triangles, three
+distinct Z levels.
+
+Sets the height of the Cree emitter above the condenser, which is what determines **projection
+convergence** at the substrate plane. Its 92 mm is therefore an optical dimension, not a structural
+one — changing it changes the throw.
+
+### Measured profile
+
+| Z | ID | OD | Section |
+|---|---|---|---|
+| 0.00 (top) | Ø142.84 | **Ø149.26** | narrow end of the taper |
+| −15.88 | — | **Ø149.82** | taper meets the straight section |
+| −92.07 (bottom) | Ø142.84 | **Ø149.82** | straight, full length |
+
+Only three Z levels, so the band between 0.00 and −15.88 is a single conical surface — a true taper,
+not a step. Half-angle ≈ **1.01°**.
+
+The **Ø142.84 mm bore is constant the full height**: the clear optical aperture, unobstructed.
+
+### Why the design works
+
+Both mating joints are cut to **+0.04 mm interference**, but they do different jobs:
+
+- **Top (part 14)** — the 1° taper is a **self-locking wedge**. The light ring's Ø149.22 skirt starts
+  at the tube's narrowest point and tightens as it descends, centring the emitter on the optical axis
+  and holding it without a fastener. Taper joints self-centre; a straight press fit does not.
+- **Bottom (part 13)** — a straight Ø149.82 section **76.19 mm** long. The retaining ring is 27.40 mm
+  tall, so it can be set anywhere across **48.79 mm** of travel. *That* is the adjustability: the
+  height at which the spacer is stopped from entering the body.
+
+### ⚠ 0.02 mm radial is below what FDM can hold
+
+This is the one thing to know before printing. **+0.04 mm diametral = 0.02 mm on radius**, an order
+of magnitude finer than typical FDM repeatability (~0.1–0.2 mm), and smaller than the dimensional
+shift from a change of filament batch, nozzle temperature, or ambient conditions.
+
+**So the model does not decide these fits — the printer does.** Expect to calibrate:
+
+☐ Print a **short test coupon** of each joint — 10 mm of the top taper and 10 mm of the lower
+  straight section — before committing to a 92 mm tube and a 174 mm ring.
+☐ **Target the tuning phase first, not the final fit.** While the height is still being set, part 13's
+  joint needs to be *movable* — a fit calibrated to hold permanently will fight every adjustment.
+  Aim for firm-but-slidable now; tighten at lock-in.
+☐ Record the **measured** OD you actually achieve versus the modelled 149.82 / 149.26, and the
+  resulting fit (free / snug / immovable) for each joint.
+☐ Decide which way to err. These joints fail in opposite directions: the **taper** tolerates being
+  slightly undersize (it simply seats deeper), while the **straight friction section** does not —
+  undersize there and the retaining ring will not hold the load. If a compensation is needed, bias
+  toward the straight section.
+
+### ⏸ Height is TUNABLE BY DESIGN — lock-in pending
+
+**The 92.07 mm is provisional and intended to be.** Optimal optical height is being determined
+empirically, not calculated up front: the emitter is moved until projection convergence at the
+substrate plane is best, and *then* the number gets recorded.
+
+That is what the adjustable joint is for. Part 13's **48.79 mm of travel** is not slop to be
+engineered out — **it is the tuning range**, and it stays open until the optimum is found.
+
+**Planned lock-in.** Once the optimal height is determined:
+
+☐ **Record the number** — the measured emitter height, and the convergence result that justified it.
+☐ **Then revise the parts to suit.** The outcome may be a **longer** tube, a **shorter** one, a
+  **better-fitting** joint, or a fixed stop replacing the adjustment entirely. None of that is decided
+  yet, and none of it should be pre-empted.
+
+> ⚠ **The fit that tunes well is not the fit that locks well.** These are different requirements and
+> the design currently has to serve both:
+>
+> | Phase | What part 13's joint must do |
+> |---|---|
+> | **Tuning (now)** | Slide, re-grip, and hold position through **repeated** adjustment |
+> | **Locked (later)** | Hold one position permanently under sustained load |
+>
+> Repeated sliding **burnishes PETG** — each adjustment cycle wears the interface slightly, so a fit
+> that grips on the first setting can be looser by the tenth. Do not tighten the fit to solve this
+> during tuning; that makes adjustment harder and accelerates the wear. **Solve it at lock-in**, with
+> a mechanical stop, a clamping screw, or a reprint at the final height.
+
+### ☐ Still open
+
+☐ **Enlarger body opening** — still the one unrecorded dimension in this sub-assembly (see
+  [D-13](#d-13-light-spacer-lower-ring)). Part 13's Ø159.94 OD must exceed it.
+**Height is deliberately tunable — see below.** 92.07 mm is a *starting point*, not a derived value.
+☐ **PETG, per the device-wide rule** — and load-bearing twice over here: this tube carries the light
+  ring's weight *and* both interference fits. Creep in the wall relaxes both joints at once.
