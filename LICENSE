@@ -18,7 +18,11 @@ See section 4.
 1. SOFTWARE — MIT License
 ================================================================================
 
-Applies to: all source code, including the repository root and `heater/`.
+Applies to: `Software/` — all source code and scripts.
+
+Source code is MIT-licensed wherever it appears in this repository, including
+any scripts stored alongside documentation (for example `Docs/heater/*.py`).
+Placement does not change a file's license; its nature does.
 
 Copyright (c) 2026 Eric Schneider
 
@@ -63,7 +67,8 @@ SPDX-License-Identifier: CERN-OHL-S-2.0
 3. DOCUMENTATION — CC BY-SA 4.0
 ================================================================================
 
-Applies to: `docs/` — written chapters, guides, and reference material.
+Applies to: `Docs/` — written chapters, guides, reference material, and the
+heater calibration notes in `Docs/heater/`.
 
 Copyright (c) 2026 Eric Schneider
 
