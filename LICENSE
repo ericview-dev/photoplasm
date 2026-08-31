@@ -1,33 +1,91 @@
-Photoplasm follows a Pioreactor-style open-source model: core software is released under the MIT License, which permits broad reuse with required copyright and license attribution; documentation is licensed under CC BY-SA 4.0; and hardware designs are licensed under CERN-OHL-S v2, both of which preserve attribution and reciprocal licensing requirements. The Photoplasm name, branding, proprietary know-how, unpublished processes, and separately protected inventions remain outside those blanket licenses.
+PHOTOPLASM — LICENSING
+
+Copyright (c) 2026 Eric Schneider
+
+Photoplasm follows a Pioreactor-style open-source model. Different parts of this
+project carry different licenses, chosen to suit what each part is:
+
+    Software        MIT License        permissive reuse, attribution required
+    Hardware        CERN-OHL-S v2      strongly reciprocal
+    Documentation   CC BY-SA 4.0       share-alike
+
+The Photoplasm name, branding, proprietary know-how, unpublished processes, and
+separately protected inventions are NOT covered by any of these licenses.
+See section 4.
 
 
+================================================================================
+1. SOFTWARE — MIT License
+================================================================================
 
-MIT License
-/Software
-Copyright (c) 2026 ericview
+Applies to: all source code, including the repository root and `heater/`.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Copyright (c) 2026 Eric Schneider
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-CC BY-SA 4.0: 
-Copyright (c) 2026 ericview
-/3D
-This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. You may share and adapt the material, including for commercial purposes, provided you give appropriate credit, indicate changes, and distribute derivative works under the same license.
 
-/DOCS
-CERN-OHL-S v2: This hardware design is licensed under the CERN Open Hardware Licence Version 2 – Strongly Reciprocal (CERN-OHL-S-2.0). You may study, modify, manufacture, and distribute the design, provided you comply with the license’s notice, source-availability, and strong reciprocal requirements for covered modifications and derivatives.
+================================================================================
+2. HARDWARE DESIGNS — CERN-OHL-S v2
+================================================================================
+
+Applies to: `3D/` — mechanical parts, STL / STEP / 3MF files, and the mechanical
+documentation describing them.
+
+Copyright (c) 2026 Eric Schneider
+
+This hardware design is licensed under the CERN Open Hardware Licence Version 2
+— Strongly Reciprocal (CERN-OHL-S-2.0). You may study, modify, manufacture, and
+distribute the design, provided you comply with the license's notice,
+source-availability, and strong reciprocal requirements for covered
+modifications and derivatives.
+
+Full text: https://cern-ohl.web.cern.ch/
+SPDX-License-Identifier: CERN-OHL-S-2.0
+
+
+================================================================================
+3. DOCUMENTATION — CC BY-SA 4.0
+================================================================================
+
+Applies to: `docs/` — written chapters, guides, and reference material.
+
+Copyright (c) 2026 Eric Schneider
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0
+International License. You may share and adapt the material, including for
+commercial purposes, provided you give appropriate credit, indicate changes, and
+distribute derivative works under the same license.
+
+Full text: https://creativecommons.org/licenses/by-sa/4.0/
+SPDX-License-Identifier: CC-BY-SA-4.0
+
+
+================================================================================
+4. NOT COVERED BY THESE LICENSES
+================================================================================
+
+The following remain fully reserved and fall outside every license above:
+
+  - The Photoplasm name and branding
+  - Proprietary know-how
+  - Unpublished processes
+  - Separately protected inventions
+
+Nothing in sections 1-3 grants any trademark right, nor any license to material
+that has not been published in this repository.
