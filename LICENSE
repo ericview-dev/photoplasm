@@ -1,5 +1,8 @@
-MIT License
+Photoplasm follows a Pioreactor-style open-source model: core software is released under the MIT License, which permits broad reuse with required copyright and license attribution; documentation is licensed under CC BY-SA 4.0; and hardware designs are licensed under CERN-OHL-S v2, both of which preserve attribution and reciprocal licensing requirements. The Photoplasm name, branding, proprietary know-how, unpublished processes, and separately protected inventions remain outside those blanket licenses.MIT License
 
+
+MIT License
+/Software
 Copyright (c) 2026 ericview
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,3 +22,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+CC BY-SA 4.0: 
+Copyright (c) 2026 ericview
+/3D
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. You may share and adapt the material, including for commercial purposes, provided you give appropriate credit, indicate changes, and distribute derivative works under the same license.
+
+/DOCS
+CERN-OHL-S v2: This hardware design is licensed under the CERN Open Hardware Licence Version 2 – Strongly Reciprocal (CERN-OHL-S-2.0). You may study, modify, manufacture, and distribute the design, provided you comply with the license’s notice, source-availability, and strong reciprocal requirements for covered modifications and derivatives.
