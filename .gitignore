@@ -229,3 +229,6 @@ cal_logs/
 
 # macOS
 .DS_Store
+
+# Photoplasm — personal working notes, not repo artifacts
+3D/inventory_audit.md
