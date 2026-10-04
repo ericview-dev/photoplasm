@@ -89,4 +89,17 @@ Active development on the `dev` branch. Hardware subsystems operational: LED rin
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE)
+Photoplasm follows a Pioreactor-style open-source model: different parts of the project
+carry the license that suits what each part is.
+
+| | | |
+|---|---|---|
+| `Software/` | **MIT** | permissive reuse, attribution required |
+| `Docs/` · `Guide/` | **CC BY-SA 4.0** | share and adapt, including commercially, under the same license |
+| `3D/` | **CERN-OHL-S-2.0** | strongly reciprocal hardware licence |
+
+Source code is MIT wherever it sits — placement does not change a file's license, its
+nature does. The Photoplasm name, branding, unpublished know-how and separately protected
+inventions are reserved and fall outside all three.
+
+Full terms, including third-party materials: [`LICENSE`](LICENSE)
