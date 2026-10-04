@@ -9,6 +9,10 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+# ...but NOT /Build, which is a deliverable, not an artifact. This filesystem is
+# case-insensitive and git matches ignores the same way, so `build/` above was
+# silently swallowing the printed build guides.
+!/Build/
 develop-eggs/
 dist/
 downloads/
