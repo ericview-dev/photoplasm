@@ -3,7 +3,7 @@ Photoplasm follows a Pioreactor-style open-source model: core software is releas
 /Software — MIT License
 The MIT License applies to software and associated software documentation in this repository, unless a file explicitly states otherwise. It covers the /Software directory and any source code or script stored alongside other material (for example Docs/heater/*.py): placement does not change a file's license, its nature does.
 SPDX-License-Identifier: MIT
-Copyright (c) 2026 Eric Schneider
+Copyright (c) 2026 Eric Schneider (ericview-dev)
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 /Docs and /Guide — Creative Commons Attribution-ShareAlike 4.0
-Copyright (c) 2026 Eric Schneider
+Copyright (c) 2026 Eric Schneider (ericview-dev)
 Documentation in this repository is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0), unless a file explicitly states otherwise. This covers the /Docs directory and the /Guide directory, which holds the printed build guides, together with any other written or illustrated material whose nature is documentation — except source code, which is MIT-licensed wherever it sits.
 You may share and adapt the licensed material, including for commercial purposes, provided that you:
 give appropriate credit;
@@ -31,7 +31,7 @@ License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
 SPDX-License-Identifier: CC-BY-SA-4.0
 The complete official CC BY-SA 4.0 license terms govern this material.
 /3D — CERN Open Hardware Licence Version 2 — Strongly Reciprocal
-Copyright (c) 2026 Eric Schneider
+Copyright (c) 2026 Eric Schneider (ericview-dev)
 Hardware design files contained within the /3D directory, including CAD files, mechanical designs, fabrication files, schematics, PCB designs, and related hardware design materials, are licensed under the CERN Open Hardware Licence Version 2 — Strongly Reciprocal (CERN-OHL-S-2.0), unless a file explicitly states otherwise.
 You may study, use, modify, manufacture, and distribute covered designs subject to the notice, source-availability, and strongly reciprocal requirements of CERN-OHL-S-2.0.
 License: CERN-OHL-S-2.0 — https://cern-ohl.web.cern.ch/
