@@ -9,6 +9,10 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+# NOTE: this filesystem is case-insensitive and git matches ignores the same way,
+# so `build/` above also matches a folder named /Build -- which is how the printed
+# guide went missing with nothing in `git status` to say so. /Guide avoids the
+# collision; keep deliverables out of any name that collides with this block.
 develop-eggs/
 dist/
 downloads/
